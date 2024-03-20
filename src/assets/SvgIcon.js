@@ -38,6 +38,9 @@ import cross from './Svgs/cross.svg';
 import plus from './Svgs/plus.svg';
 import check from './Svgs/check.svg';
 import uncheck from './Svgs/uncheck.svg';
+import popedit from './Svgs/popedit.svg';
+import popdel from './Svgs/popdel.svg';
+import image from './Svgs/image.svg';
 
 export const SvgIcon = {
   avtar,
@@ -80,4 +83,7 @@ export const SvgIcon = {
   plus,
   check,
   uncheck,
+  popdel,
+  popedit,
+  image,
 };

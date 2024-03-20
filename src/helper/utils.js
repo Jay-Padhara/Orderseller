@@ -56,3 +56,21 @@ export const handleMessage = (title, desc, type) => {
     type: type,
   });
 };
+
+// SANKAT SAMAY NI SAKAL
+
+// try {
+//   const prodata = await axios({
+//     baseURL: `http://146.190.140.18:2727${URLS.EDITPRODUCT}${proid}`,
+//     method: 'PUT',
+//     data: formData,
+//     headers: {
+//       'Content-Type': 'multipart/form-data',
+//     },
+//   });
+//   console.log(prodata, '...');
+// } catch (error) {
+//   console.log(error);
+//   console.log(error.request, 'req');
+//   console.log(error.response, 'res');
+// }

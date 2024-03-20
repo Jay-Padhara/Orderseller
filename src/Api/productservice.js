@@ -3,6 +3,16 @@ import {
   addprofailed,
   addprosuccess,
 } from '../Redux/Reducers/Product/addproduct';
+import {
+  deletepro,
+  deleteprofailed,
+  deleteprosuccess,
+} from '../Redux/Reducers/Product/deleteproduct';
+import {
+  editpro,
+  editprofailed,
+  editprosuccess,
+} from '../Redux/Reducers/Product/editreducer';
 
 import {
   getallproduct,
@@ -48,6 +58,45 @@ export const addproduct = async (dispatch, data) => {
   } catch (error) {
     console.log(error);
     dispatch(addprofailed(error));
+    return error;
+  }
+};
+
+export const deleteproduct = async (dispatch, id) => {
+  try {
+    dispatch(deletepro());
+    const response = await Api.delete(URLS.DELETEPRODUCT, id);
+    console.log(response, 'delete product');
+
+    if (!response?.error) {
+      dispatch(deleteprosuccess(response));
+    } else {
+      dispatch(deleteprofailed(response?.message));
+    }
+  } catch (error) {
+    console.log(error);
+    dispatch(deleteprofailed(error));
+    return error;
+  }
+};
+
+export const editproduct = async (dispatch, id, data) => {
+  try {
+    console.log(data, '.....');
+    dispatch(editpro());
+    const response = await Api.put(`${URLS.EDITPRODUCT}${id}`, data, {
+      isMultipart: true,
+    });
+    console.log(response);
+
+    if (!response?.error) {
+      dispatch(editprosuccess(response));
+    } else {
+      dispatch(editprofailed(response?.message));
+    }
+    return response;
+  } catch (error) {
+    dispatch(editprofailed(error));
     return error;
   }
 };

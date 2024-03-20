@@ -1,5 +1,5 @@
 import React from 'react';
-import {Text, View, Modal, StyleSheet} from 'react-native';
+import {StyleSheet, View, Text} from 'react-native';
 import {
   MenuOption,
   MenuOptions,
@@ -11,32 +11,39 @@ import {
   responsiveHeight as rh,
   responsiveWidth as rw,
 } from 'react-native-responsive-dimensions';
+import {appConstant} from '../../helper/appconstants';
 import {colors} from '../../assets/colors';
+import {SvgIcon} from '../../assets/SvgIcon';
+import {fonts} from '../../assets/fonts';
 
-export const Popupmenu = ({visible}) => {
+export const Popupmenu = ({opened, setPopup, onEdit, onDelete}) => {
   return (
-    <Modal transparent visible={visible} animationType="fade">
-      <View style={styles.container}>
-        <View style={styles.head}>
-          <Menu>
-            <MenuTrigger text="Select action" />
-            <MenuOptions>
-              <MenuOption onSelect={() => alert(`Save`)} text="Save" />
-              <MenuOption onSelect={() => alert(`Delete`)}>
-                <Text style={{color: 'red'}}>Delete</Text>
-              </MenuOption>
-              <MenuOption
-                onSelect={() => alert(`Not called`)}
-                disabled={true}
-                text="Disabled"
-              />
-            </MenuOptions>
-          </Menu>
-        </View>
-      </View>
-    </Modal>
+    <Menu
+      opened={opened}
+      onBackdropPress={() => setPopup(false)}
+      style={styles.popup}>
+      <MenuTrigger />
+      <MenuOptions optionsContainerStyle={styles.menu}>
+        <CustomMenu onSelect={onEdit} text={appConstant.edit}>
+          <SvgIcon.popedit width={rw(5)} height={rh(4)} />
+        </CustomMenu>
+
+        <CustomMenu onSelect={onDelete} text={appConstant.dele}>
+          <SvgIcon.popdel width={rw(5)} height={rh(4)} />
+        </CustomMenu>
+      </MenuOptions>
+    </Menu>
   );
 };
+
+const CustomMenu = ({onSelect, children, text}) => (
+  <MenuOption onSelect={onSelect}>
+    <View style={styles.menuOption}>
+      {children}
+      <Text style={styles.text}>{text}</Text>
+    </View>
+  </MenuOption>
+);
 
 const styles = StyleSheet.create({
   container: {
@@ -45,15 +52,33 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
   },
 
-  head: {
-    width: rw(30),
-    height: rw(20),
-    alignItems: 'center',
-    backgroundColor: colors.grey,
-    borderRadius: 15,
-    elevation: 10,
+  popup: {
+    position: 'absolute',
+    right: rw(4),
+    top: rh(5),
+  },
+
+  menu: {
+    width: rw(32),
+    borderRadius: 20,
+    backgroundColor: colors.white,
+    elevation: 30,
     shadowColor: colors.labelgrey,
-    shadowOffset: {width: 0, height: 4},
+    shadowOffset: {width: 1, height: 4},
     shadowOpacity: 0.8,
+  },
+
+  menuOption: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    borderRadius: 20,
+    marginLeft: rw(2),
+  },
+
+  text: {
+    fontSize: rf(2),
+    color: colors.black,
+    fontFamily: fonts.semibold,
+    marginLeft: rw(4),
   },
 });

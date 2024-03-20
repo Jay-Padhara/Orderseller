@@ -1,4 +1,4 @@
-import React, {useCallback, useEffect, useState} from 'react';
+import React, {useCallback, useState} from 'react';
 import {
   View,
   Text,
@@ -11,7 +11,7 @@ import {
 import {SafeAreaView} from 'react-native-safe-area-context';
 import {colors} from '../../assets/colors';
 import {SvgIcon} from '../../assets/SvgIcon';
-import {useNavigation} from '@react-navigation/native';
+import {useFocusEffect, useNavigation} from '@react-navigation/native';
 import {
   responsiveFontSize as rf,
   responsiveHeight as rh,
@@ -20,11 +20,13 @@ import {
 import {appConstant} from '../../helper/appconstants';
 import {fonts} from '../../assets/fonts';
 import {Loader} from '../../Components/Loader';
-import {getallproducts} from '../../Api/productservice';
+import {deleteproduct, getallproducts} from '../../Api/productservice';
 import {useDispatch, useSelector} from 'react-redux';
 import {handleMessage} from '../../helper/utils';
 import {Filtermodal} from '../../Components/Filtermodal';
 import {Importcate} from '../../Components/Importcatemodal';
+import {Popupmenu} from '../../Components/Popupmenu';
+import {Delemodal} from '../../Components/Deletemodal.js';
 
 export const Product = () => {
   const navigation = useNavigation();
@@ -34,9 +36,15 @@ export const Product = () => {
   const compid = userdetails?.result?.id;
 
   const [product, setProduct] = useState([]);
+  const [filteredproduct, setFilteredproduct] = useState([]);
   const [isloading, setLoading] = useState(false);
   const [visible, setVisible] = useState(false);
+  const [isdelmodal, setDelmodal] = useState(false);
+  const [ispopup, setPopup] = useState(false);
   const [isshow, setShow] = useState(false);
+
+  const [selectedpro, setSelectedpro] = useState('');
+  const [delid, setDelid] = useState();
 
   //GET ALL PRODUCTS
   const handleProduct = useCallback(async () => {
@@ -47,8 +55,8 @@ export const Product = () => {
       console.log(response, 'product response');
 
       if (!response?.error) {
-        console.log(response?.result?.category, 'result');
         setProduct(response?.result);
+        setFilteredproduct(response?.result);
       } else {
         handleMessage(appConstant.error, response?.message, appConstant.danger);
       }
@@ -59,12 +67,66 @@ export const Product = () => {
     }
   }, [dispatch, compid]);
 
-  useEffect(() => {
-    handleProduct();
-  }, [handleProduct]);
+  useFocusEffect(
+    useCallback(() => {
+      handleProduct();
+    }, [handleProduct]),
+  );
 
-  const handleDot = async item => {
-    console.log(item, 'item');
+  const handleEdit = async item => {
+    console.log(item);
+    navigation.navigate(appConstant.addproduct, {data: item, from: 'edit'});
+    setSelectedpro();
+  };
+
+  const handleDel = async item => {
+    console.log(item?.id);
+    setDelid(item?.id);
+    setDelmodal(true);
+    setSelectedpro();
+  };
+
+  const handleDeletepro = async () => {
+    try {
+      setLoading(true);
+
+      const data = {
+        ids: [delid],
+      };
+      console.log(data, 'data');
+
+      const response = await deleteproduct(dispatch, data);
+      console.log(response, 'delete product response');
+
+      if (!response?.error) {
+        setDelmodal(false);
+        handleMessage(
+          appConstant.Success,
+          response?.message,
+          appConstant.success,
+        );
+        handleProduct();
+      } else {
+        handleMessage(appConstant.error, response?.message, appConstant.danger);
+      }
+    } catch (error) {
+      console.log(error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleSearch = async text => {
+    console.log(text);
+    if (!text) {
+      setFilteredproduct(product);
+    } else {
+      const filterlist = product.filter(p => {
+        return p?.productName.toUpperCase().includes(text?.toUpperCase());
+      });
+      filterlist.sort();
+      setFilteredproduct(filterlist);
+    }
   };
 
   return (
@@ -79,6 +141,12 @@ export const Product = () => {
         text={appConstant.importproduct}
         button={appConstant.selectsvg}
         downloadtext={appConstant.downloadproduct}
+      />
+
+      <Delemodal
+        visible={isdelmodal}
+        onCancel={() => setDelmodal(false)}
+        onPress={handleDeletepro}
       />
 
       <View style={styles.head}>
@@ -106,6 +174,7 @@ export const Product = () => {
           style={styles.svgbox}
           placeholder={appConstant.searchhere}
           placeholderTextColor={colors.labelgrey}
+          onChangeText={text => handleSearch(text)}
         />
         <TouchableOpacity
           style={styles.filter}
@@ -115,7 +184,7 @@ export const Product = () => {
       </View>
 
       <FlatList
-        data={product}
+        data={filteredproduct}
         keyExtractor={(item, index) => index}
         renderItem={({item}) => {
           return (
@@ -124,10 +193,14 @@ export const Product = () => {
                 <View style={styles.proname}>
                   <Image
                     source={{
-                      uri: item?.image,
+                      uri:
+                        item?.image !== undefined && item?.image !== null
+                          ? item.image
+                          : 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTinGCfuvtIzNvb6AsRFE7LtRJrTEKDxVxe6g&usqp=CAU',
                     }}
                     style={styles.img}
                   />
+
                   <View style={styles.categ}>
                     <Text style={styles.catetext}>
                       {appConstant.proname}
@@ -144,10 +217,22 @@ export const Product = () => {
 
                   <TouchableOpacity
                     style={styles.dot}
-                    onPress={() => handleDot(item)}>
+                    onPress={() => {
+                      setPopup(true);
+                      console.log(ispopup);
+                      setSelectedpro(item?.id);
+                    }}>
                     <SvgIcon.dot width={rw(2.2)} height={rh(2.2)} />
                   </TouchableOpacity>
                 </View>
+
+                {/* POPUP-MENU */}
+                <Popupmenu
+                  opened={selectedpro !== null && selectedpro === item?.id}
+                  setPopup={() => setSelectedpro()}
+                  onEdit={() => handleEdit(item)}
+                  onDelete={() => handleDel(item)}
+                />
 
                 <View style={styles.line}>
                   <SvgIcon.line width={rw(80)} height={rh(1)} />
@@ -347,11 +432,12 @@ const styles = StyleSheet.create({
   mainview: {
     backgroundColor: colors.white,
     width: rw(90),
-    height: rh(29),
+    height: rh(30),
     borderRadius: 15,
-    elevation: 10,
+    margin: rh(1),
+    elevation: 30,
     shadowColor: colors.labelgrey,
-    shadowOffset: {width: 0, height: 4},
+    shadowOffset: {width: 2, height: 5},
     shadowOpacity: 0.8,
   },
 
@@ -373,18 +459,19 @@ const styles = StyleSheet.create({
   },
 
   catetext: {
-    fontFamily: fonts.medium,
-    fontSize: rf(2),
+    fontFamily: fonts.semibold,
+    fontSize: rf(1.9),
     color: colors.black,
   },
 
   product: {
     color: colors.labelgrey,
-    fontFamily: fonts.medium,
-    fontSize: rf(2),
+    fontFamily: fonts.semibold,
+    fontSize: rf(1.8),
   },
 
   dot: {
+    padding: rw(1),
     position: 'absolute',
     right: 2,
     top: 7,
@@ -403,8 +490,8 @@ const styles = StyleSheet.create({
 
   protext: {
     color: colors.black,
-    fontFamily: fonts.semibold,
-    fontSize: rf(1.6),
+    fontFamily: fonts.bold,
+    fontSize: rf(1.7),
   },
 
   protext2: {
@@ -416,12 +503,13 @@ const styles = StyleSheet.create({
   desc: {
     marginTop: rh(1.6),
     marginLeft: rw(5),
+    marginRight: rw(1),
   },
 
   description: {
     fontFamily: fonts.medium,
     color: colors.labelgrey,
-    fontSize: rf(1.6),
+    fontSize: rf(1.8),
     marginRight: rw(3),
   },
 });

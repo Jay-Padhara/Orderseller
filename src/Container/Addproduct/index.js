@@ -21,9 +21,9 @@ import {handleMessage} from '../../helper/utils';
 import {getallcategory} from '../../Api/categoryservice';
 import {Categorymodal} from '../../Components/Categorymodal';
 import {Loader} from '../../Components/Loader';
-import {addproduct} from '../../Api/productservice';
+import {addproduct, editproduct} from '../../Api/productservice';
 
-export const Addproduct = () => {
+export const Addproduct = ({route}) => {
   const navigation = useNavigation();
   const dispatch = useDispatch();
 
@@ -38,6 +38,10 @@ export const Addproduct = () => {
   const [catelist, setCatelist] = useState([]);
   const [filtercatelist, setFiltercatelist] = useState([]);
 
+  const [data, setData] = useState(null);
+  const [from, setFrom] = useState(null);
+  const [proid, setProid] = useState();
+
   const [sku, setSku] = useState();
   const [categoryname, setCategoryname] = useState();
   const [categorycode, setCategorycode] = useState();
@@ -46,7 +50,7 @@ export const Addproduct = () => {
   const [unit, setUnit] = useState();
   const [description, setDescription] = useState();
 
-  const [errlogo, setErrLogo] = useState(false);
+  const [errlogo, setErrlogo] = useState(false);
   const [errsku, setErrSku] = useState(false);
   const [errcategory, setErrcategory] = useState(false);
   const [errname, setErrName] = useState(false);
@@ -59,6 +63,29 @@ export const Addproduct = () => {
   const priceref = useRef(null);
   const unitref = useRef(null);
   const descref = useRef(null);
+
+  const handleData = useCallback(async () => {
+    setLogo(data?.image);
+    setSku(data?.sku);
+    setCategoryname(data?.category?.categoryName);
+    setCategorycode(data?.category?.id);
+    setName(data?.productName);
+    setPrice(data?.price);
+    setUnit(data?.unit);
+    setDescription(data?.description);
+    setProid(data?.id);
+  }, [data]);
+
+  useEffect(() => {
+    if (route?.params?.data) {
+      setData(route?.params?.data);
+      setFrom(route?.params?.from);
+      handleData();
+    } else {
+      setData(null);
+      setFrom(null);
+    }
+  }, [route?.params, handleData]);
 
   useEffect(() => {
     handleCategory();
@@ -80,7 +107,7 @@ export const Addproduct = () => {
     let errorstatus = false;
 
     if (!logo) {
-      setErrLogo(true);
+      setErrlogo(true);
       errorstatus = true;
     }
 
@@ -151,7 +178,7 @@ export const Addproduct = () => {
         };
         console.log(file);
         setLogo(file);
-        setErrLogo(false);
+        setErrlogo(false);
       })
       .catch(error => {
         setVisible(false);
@@ -176,7 +203,7 @@ export const Addproduct = () => {
         };
         console.log(file);
         setLogo(file);
-        setErrLogo(false);
+        setErrlogo(false);
       })
       .catch(error => {
         setVisible(false);
@@ -199,6 +226,7 @@ export const Addproduct = () => {
     console.log(text, '...');
     setCategoryname(text?.categoryName);
     setCategorycode(text?.id);
+    console.log(categorycode, 'code');
     setShow(false);
     setErrcategory(false);
     setFiltercatelist(catelist);
@@ -214,13 +242,11 @@ export const Addproduct = () => {
         const formData = new FormData();
         formData.append('image', logo);
         formData.append('sku', sku);
-        formData.append('categoryName', categoryname);
         formData.append('category', categorycode);
         formData.append('productName', name);
         formData.append('price', price);
         formData.append('unit', unit);
         formData.append('description', description);
-        // formData.append('available', ischeck);
 
         console.log(formData, '...');
 
@@ -234,6 +260,52 @@ export const Addproduct = () => {
             response?.message,
             appConstant.success,
           );
+        } else {
+          handleMessage(
+            appConstant.error,
+            response?.message,
+            appConstant.danger,
+          );
+        }
+      } catch (error) {
+        console.log(error);
+      } finally {
+        setLoading(false);
+      }
+    }
+  };
+
+  const handleEdit = async () => {
+    if (await handleError()) {
+      console.log('Encountered error...');
+    } else {
+      try {
+        setLoading(true);
+
+        const formData = new FormData();
+        formData.append('image', logo);
+        formData.append('sku', sku);
+        formData.append('category', categorycode);
+        formData.append('productName', name);
+        formData.append('price', price);
+        formData.append('unit', unit);
+        formData.append('description', description);
+        formData.append('isPublished', data?.isPublished);
+
+        console.log(formData, '...');
+        console.log(proid);
+
+        const response = await editproduct(dispatch, proid, formData);
+        console.log(response, 'EDIT product response');
+
+        if (!response?.error) {
+          handleEmpty();
+          handleMessage(
+            appConstant.Success,
+            response?.message,
+            appConstant.success,
+          );
+          navigation.navigate(appConstant.product);
         } else {
           handleMessage(
             appConstant.error,
@@ -274,7 +346,11 @@ export const Addproduct = () => {
           onPress={() => navigation.goBack()}>
           <SvgIcon.arrowleft width={rh(3.5)} height={rh(3.5)} />
         </TouchableOpacity>
-        <Text style={styles.text}>{appConstant.addpro}</Text>
+        {from ? (
+          <Text style={styles.text}>{appConstant.editpro}</Text>
+        ) : (
+          <Text style={styles.text}>{appConstant.addpro}</Text>
+        )}
       </View>
 
       <KeyboardAwareScrollView
@@ -284,7 +360,7 @@ export const Addproduct = () => {
         contentContainerStyle={styles.mainview}>
         {logo ? (
           <View style={styles.logoview}>
-            <Image source={logo} style={styles.logo} />
+            <Image source={data ? {uri: logo} : logo} style={styles.logo} />
             <TouchableOpacity
               style={styles.close}
               onPress={() => {
@@ -504,12 +580,21 @@ export const Addproduct = () => {
           </TouchableOpacity>
         </View>
 
-        <Button
-          style={styles.touchsignin}
-          text={appConstant.addpro}
-          textstyle={styles.submit}
-          onPress={handleAddproduct}
-        />
+        {from === 'edit' ? (
+          <Button
+            style={styles.touchsignin}
+            text={appConstant.editpro}
+            textstyle={styles.submit}
+            onPress={handleEdit}
+          />
+        ) : (
+          <Button
+            style={styles.touchsignin}
+            text={appConstant.addpro}
+            textstyle={styles.submit}
+            onPress={handleAddproduct}
+          />
+        )}
       </KeyboardAwareScrollView>
     </SafeAreaView>
   );
@@ -666,7 +751,7 @@ const styles = StyleSheet.create({
   },
 
   textin: {
-    width: rw(50),
+    width: rw(30),
     borderRadius: 15,
     padding: rw(3.5),
     fontFamily: fonts.medium,
@@ -789,7 +874,7 @@ const styles = StyleSheet.create({
   errsku: {
     color: colors.red,
     fontSize: rf(1.6),
-    marginLeft: rw(36),
+    marginLeft: rw(18),
     fontFamily: fonts.medium,
   },
 

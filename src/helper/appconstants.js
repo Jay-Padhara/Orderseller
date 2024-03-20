@@ -124,6 +124,7 @@ export const appConstant = {
   lorem:
     'Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been',
   addpro: 'Add product',
+  editpro: 'Edit product',
   image: 'Image : ',
   productname: 'Name',
   errlogo: 'Select product logo',
@@ -136,4 +137,6 @@ export const appConstant = {
   filter: 'Filter',
   reset: 'Reset',
   apply: 'Apply',
+  edit: 'Edit',
+  dele: 'Delete',
 };

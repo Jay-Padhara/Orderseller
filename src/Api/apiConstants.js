@@ -10,4 +10,6 @@ export const URLS = {
   DELETECATEGORY: '/categories/',
   GETALLPRODUCTS: '/product?',
   ADDPRODUCT: '/product',
+  DELETEPRODUCT: '/product',
+  EDITPRODUCT: '/product/',
 };

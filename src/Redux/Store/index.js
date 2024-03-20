@@ -9,6 +9,7 @@ import addcategory from '../Reducers/Category/addcategory';
 import editcategoryreducer from '../Reducers/Category/editcategoryreducer';
 import deletecategoryreducer from '../Reducers/Category/deletecategoryreducer';
 import addproduct from '../Reducers/Product/addproduct';
+import deleteproductreducer from '../Reducers/Product/deleteproduct';
 
 export const store = configureStore({
   reducer: {
@@ -22,5 +23,6 @@ export const store = configureStore({
     editcate: editcategoryreducer,
     deletecate: deletecategoryreducer,
     addproduct: addproduct,
+    deleteproduct: deleteproductreducer,
   },
 });

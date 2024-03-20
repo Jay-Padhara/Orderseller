@@ -95,7 +95,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
-    backgroundColor: colors.lightblack,
+    backgroundColor: colors.grey,
     borderRadius: 13,
     padding: rh(1.8),
   },
@@ -117,14 +117,14 @@ const styles = StyleSheet.create({
   close: {
     position: 'absolute',
     right: rw(6),
-    top: rh(0.5),
+    top: rh(0.8),
   },
 
   cancel: {
     width: rw(44),
     alignItems: 'center',
     marginTop: rh(3),
-    backgroundColor: colors.lightblack,
+    backgroundColor: colors.grey,
     borderRadius: 10,
     padding: rw(4),
   },

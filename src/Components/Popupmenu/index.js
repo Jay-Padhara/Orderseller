@@ -16,7 +16,16 @@ import {colors} from '../../assets/colors';
 import {SvgIcon} from '../../assets/SvgIcon';
 import {fonts} from '../../assets/fonts';
 
-export const Popupmenu = ({opened, setPopup, onEdit, onDelete}) => {
+export const Popupmenu = ({
+  opened,
+  setPopup,
+  onEdit,
+  onDelete,
+  buyeroption,
+  onView,
+  onChangestatus,
+  status,
+}) => {
   return (
     <Menu
       opened={opened}
@@ -24,13 +33,41 @@ export const Popupmenu = ({opened, setPopup, onEdit, onDelete}) => {
       style={styles.popup}>
       <MenuTrigger />
       <MenuOptions optionsContainerStyle={styles.menu}>
-        <CustomMenu onSelect={onEdit} text={appConstant.edit}>
-          <SvgIcon.popedit width={rw(5)} height={rh(4)} />
-        </CustomMenu>
+        {buyeroption ? (
+          <>
+            <CustomMenu onSelect={onEdit} text={appConstant.edit}>
+              <SvgIcon.popedit width={rw(4.5)} height={rh(3.2)} />
+            </CustomMenu>
 
-        <CustomMenu onSelect={onDelete} text={appConstant.dele}>
-          <SvgIcon.popdel width={rw(5)} height={rh(4)} />
-        </CustomMenu>
+            <CustomMenu onSelect={onDelete} text={appConstant.dele}>
+              <SvgIcon.popdel width={rw(4.5)} height={rh(3.2)} />
+            </CustomMenu>
+
+            <CustomMenu onSelect={onView} text={appConstant.view}>
+              <SvgIcon.eye width={rw(4.5)} height={rh(3.2)} />
+            </CustomMenu>
+
+            {status ? (
+              <CustomMenu onSelect={onChangestatus} text={appConstant.inactive}>
+                <SvgIcon.inactive width={rw(4.5)} height={rh(3.2)} />
+              </CustomMenu>
+            ) : (
+              <CustomMenu onSelect={onChangestatus} text={appConstant.active}>
+                <SvgIcon.active width={rw(4.5)} height={rh(3.2)} />
+              </CustomMenu>
+            )}
+          </>
+        ) : (
+          <>
+            <CustomMenu onSelect={onEdit} text={appConstant.edit}>
+              <SvgIcon.popedit width={rw(4.5)} height={rh(3.2)} />
+            </CustomMenu>
+
+            <CustomMenu onSelect={onDelete} text={appConstant.dele}>
+              <SvgIcon.popdel width={rw(4.5)} height={rh(3.2)} />
+            </CustomMenu>
+          </>
+        )}
       </MenuOptions>
     </Menu>
   );
@@ -54,13 +91,14 @@ const styles = StyleSheet.create({
 
   popup: {
     position: 'absolute',
-    right: rw(4),
-    top: rh(5),
+    right: rw(1),
+    top: rh(2),
   },
 
   menu: {
     width: rw(32),
     borderRadius: 20,
+    padding: rw(1),
     backgroundColor: colors.white,
     elevation: 30,
     shadowColor: colors.labelgrey,
@@ -70,9 +108,8 @@ const styles = StyleSheet.create({
 
   menuOption: {
     flexDirection: 'row',
-    alignItems: 'center',
     borderRadius: 20,
-    marginLeft: rw(2),
+    marginLeft: rw(1.6),
   },
 
   text: {

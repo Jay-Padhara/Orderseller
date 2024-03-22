@@ -59,7 +59,6 @@ export const Addcatemodal = ({
                 style={styles.textin}
                 blurOnSubmit
                 value={value1}
-                keyboardType="number-pad"
                 returnKeyType="next"
                 onChangeText={text => code(text)}
                 onSubmitEditing={onSubmitEditing}

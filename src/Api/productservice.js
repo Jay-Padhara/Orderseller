@@ -65,7 +65,7 @@ export const addproduct = async (dispatch, data) => {
 export const deleteproduct = async (dispatch, id) => {
   try {
     dispatch(deletepro());
-    const response = await Api.delete(URLS.DELETEPRODUCT, id);
+    const response = await Api.delete(URLS.DELETEPRODUCT, {data: id});
     console.log(response, 'delete product');
 
     if (!response?.error) {
@@ -73,6 +73,7 @@ export const deleteproduct = async (dispatch, id) => {
     } else {
       dispatch(deleteprofailed(response?.message));
     }
+    return response;
   } catch (error) {
     console.log(error);
     dispatch(deleteprofailed(error));

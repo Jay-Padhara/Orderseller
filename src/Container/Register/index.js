@@ -383,7 +383,7 @@ const styles = StyleSheet.create({
 
   email: {
     color: colors.labelgrey,
-    fontSize: rf(1.9),
+    fontSize: rf(1.8),
     marginLeft: rw(7),
     fontFamily: fonts.medium,
   },
@@ -473,7 +473,7 @@ const styles = StyleSheet.create({
     width: rw(76),
     marginLeft: rw(2),
     color: colors.black,
-    fontSize: rf(1.9),
+    fontSize: rf(1.8),
     fontFamily: fonts.medium,
   },
 
@@ -481,7 +481,7 @@ const styles = StyleSheet.create({
     padding: rw(4),
     width: rw(65),
     color: colors.black,
-    fontSize: rf(1.9),
+    fontSize: rf(1.8),
     fontFamily: fonts.medium,
   },
 
@@ -499,7 +499,7 @@ const styles = StyleSheet.create({
     width: rw(66.5),
     marginLeft: rw(2),
     color: colors.black,
-    fontSize: rf(1.9),
+    fontSize: rf(1.8),
     fontFamily: fonts.medium,
   },
 
@@ -511,7 +511,7 @@ const styles = StyleSheet.create({
 
   errname: {
     color: colors.red,
-    fontSize: rf(1.8),
+    fontSize: rf(1.7),
     textAlign: 'right',
     marginRight: rw(7),
     fontFamily: fonts.medium,

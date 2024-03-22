@@ -41,6 +41,12 @@ import uncheck from './Svgs/uncheck.svg';
 import popedit from './Svgs/popedit.svg';
 import popdel from './Svgs/popdel.svg';
 import image from './Svgs/image.svg';
+import eye from './Svgs/eye.svg';
+import inactive from './Svgs/inactive.svg';
+import prologo from './Svgs/prologo.svg';
+import uploadlogo from './Svgs/uploadlogo.svg';
+import active from './Svgs/active.svg';
+import up_arrow from './Svgs/up_arrow.svg';
 
 export const SvgIcon = {
   avtar,
@@ -86,4 +92,10 @@ export const SvgIcon = {
   popdel,
   popedit,
   image,
+  eye,
+  inactive,
+  prologo,
+  uploadlogo,
+  active,
+  up_arrow,
 };

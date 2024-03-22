@@ -1,10 +1,4 @@
 import {
-  getallcate,
-  getallcatefailed,
-  getallcatesuccess,
-} from '../Redux/Reducers/Category/getallcategory';
-
-import {
   addcategory,
   addcategoryfailed,
   addcategorysuccess,
@@ -12,22 +6,29 @@ import {
 
 import {URLS} from './apiConstants';
 import Api from './index';
+
 import {
   editcategory,
   editcategoryfailed,
   editcategorysuccess,
 } from '../Redux/Reducers/Category/editcategoryreducer';
+
+import {
+  getallcate,
+  getallcatefailed,
+  getallcatesuccess,
+} from '../Redux/Reducers/Category/getallcategory';
 import {
   deletecategory,
   deletecategoryfailed,
-  deletecategoysuccess,
+  deletecategorysuccess,
 } from '../Redux/Reducers/Category/deletecategoryreducer';
 
 export const getallcategory = async (dispatch, id) => {
   try {
     dispatch(getallcate());
     const response = await Api.get(`${URLS.GETALLCATEGORY}?company=${id}`);
-    console.log(response);
+    console.log(response, 'all category response');
 
     if (!response?.error) {
       dispatch(getallcatesuccess(response));
@@ -36,6 +37,7 @@ export const getallcategory = async (dispatch, id) => {
     }
     return response;
   } catch (error) {
+    console.error(error);
     dispatch(getallcatefailed(error));
     return error;
   }
@@ -77,19 +79,20 @@ export const editcategories = async (dispatch, id, data) => {
   }
 };
 
-export const deletecategories = async (dispatch, data) => {
+export const deletecategories = async (dispatch, id) => {
   try {
     dispatch(deletecategory());
-    const response = await Api.delete(URLS.DELETECATEGORY, data);
-    console.log(response);
+    const response = await Api.delete(URLS.DELETECATEGORY, {data: id});
+    console.log(response, 'delete category');
 
     if (!response?.error) {
-      dispatch(deletecategoysuccess(response));
+      dispatch(deletecategorysuccess(response));
     } else {
       dispatch(deletecategoryfailed(response?.message));
     }
     return response;
   } catch (error) {
+    console.log(error);
     dispatch(deletecategoryfailed(error));
     return error;
   }

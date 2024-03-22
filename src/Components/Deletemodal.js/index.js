@@ -75,12 +75,12 @@ const styles = StyleSheet.create({
 
   head: {
     textAlign: 'center',
-    fontSize: rf(2.2),
+    fontSize: rf(2.1),
     color: colors.black,
     fontFamily: fonts.medium,
     top: rh(2),
-    marginLeft: rw(8),
-    marginRight: rw(8),
+    marginLeft: rw(10),
+    marginRight: rw(10),
   },
 
   closeicon: {

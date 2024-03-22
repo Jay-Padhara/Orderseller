@@ -18,6 +18,8 @@ import {login} from '../Api/Authentication';
 import {useDispatch} from 'react-redux';
 import {appConstant} from '../helper/appconstants';
 import {handleMessage} from '../helper/utils';
+import {Addbuyer} from '../Container/Addbuyer';
+import {Viewbuyer} from '../Container/Viewbuyer';
 
 export const Routes = () => {
   const Stack = createNativeStackNavigator();
@@ -76,10 +78,12 @@ export const Routes = () => {
           <Stack.Screen name="Dashboard" component={Dashboard} />
           <Stack.Screen name="Category" component={Category} />
           <Stack.Screen name="Product" component={Product} />
+          <Stack.Screen name="Addproduct" component={Addproduct} />
           <Stack.Screen name="Buyer" component={Buyer} />
+          <Stack.Screen name="Addbuyer" component={Addbuyer} />
+          <Stack.Screen name="Viewbuyer" component={Viewbuyer} />
           <Stack.Screen name="Orders" component={Orders} />
           <Stack.Screen name="Profile" component={Profile} />
-          <Stack.Screen name="Addproduct" component={Addproduct} />
         </Stack.Navigator>
       )}
       {loading && <Loader visible={loading} />}

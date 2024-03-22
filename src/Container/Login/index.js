@@ -109,6 +109,7 @@ export const Login = () => {
             );
           }
         }
+        setLoading(false);
       } catch (error) {
         console.log(error);
       } finally {
@@ -137,6 +138,7 @@ export const Login = () => {
           appConstant.success,
         );
       }
+      setLoading(false);
     } catch (error) {
       console.log(error);
     } finally {
@@ -159,7 +161,7 @@ export const Login = () => {
 
       <ImageBackground source={images.backimg} style={styles.backimg}>
         <View style={styles.head}>
-          <SvgIcon.ordertank width={rw(55)} height={rh(55)} />
+          <SvgIcon.ordertank width={rw(57)} height={rh(57)} />
 
           <Text style={styles.sign}>{appConstant.signin}</Text>
         </View>
@@ -329,7 +331,7 @@ const styles = StyleSheet.create({
 
   email: {
     color: colors.labelgrey,
-    fontSize: rf(2),
+    fontSize: rf(1.9),
     marginLeft: rw(7),
     fontFamily: fonts.medium,
   },
@@ -404,7 +406,7 @@ const styles = StyleSheet.create({
     width: rw(76),
     marginLeft: rw(2),
     color: colors.black,
-    fontSize: rf(2),
+    fontSize: rf(1.9),
     fontFamily: fonts.medium,
   },
 
@@ -413,7 +415,7 @@ const styles = StyleSheet.create({
     width: rw(67),
     marginLeft: rw(2),
     color: colors.black,
-    fontSize: rf(2),
+    fontSize: rf(1.9),
     fontFamily: fonts.medium,
   },
 

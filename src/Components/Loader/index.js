@@ -4,18 +4,21 @@ import {
   StyleSheet,
   ActivityIndicator,
   Modal,
+  Platform,
   StatusBar,
 } from 'react-native';
 import {colors} from '../../assets/colors';
-import {responsiveWidth as rw} from 'react-native-responsive-dimensions';
 
 export const Loader = ({visible}) => {
+  const statusBarStyle =
+    Platform.OS === 'ios' ? 'dark-content' : 'light-content';
+
   return (
     <>
-      <StatusBar backgroundColor="transparent" barStyle="dark-content" />
+      <StatusBar backgroundColor="transparent" barStyle={statusBarStyle} />
       <Modal visible={visible} transparent animationType="fade">
         <View style={styles.main}>
-          <ActivityIndicator size={rw(10)} color={colors.primary} />
+          <ActivityIndicator size="large" color={colors.primary} />
         </View>
       </Modal>
     </>

@@ -41,8 +41,8 @@ const styles = StyleSheet.create({
   },
 
   radiotext: {
-    fontSize: rf(1.7),
-    fontFamily: fonts.medium,
+    fontSize: rf(1.8),
+    fontFamily: fonts.semibold,
     color: colors.black,
     marginLeft: rw(2),
     marginRight: rw(3),

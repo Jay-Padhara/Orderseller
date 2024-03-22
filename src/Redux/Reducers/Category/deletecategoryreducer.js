@@ -2,11 +2,11 @@ import {createSlice} from '@reduxjs/toolkit';
 
 const initialState = {
   loading: false,
-  delete_error: null,
-  delete_data: null,
+  delecate_error: null,
+  delecate_data: null,
 };
 
-const deletecategoryreducer = createSlice({
+export const deletecategoryreducer = createSlice({
   name: 'deletecategoryreducer',
   initialState,
 
@@ -17,13 +17,13 @@ const deletecategoryreducer = createSlice({
 
     deletecategoryfailed(state, action) {
       state.loading = false;
-      state.delete_error = action.payload;
+      state.delecate_error = action.payload;
     },
 
     deletecategorysuccess(state, action) {
       state.loading = false;
-      state.delete_error = null;
-      state.delete_data = action.payload;
+      state.delecate_error = null;
+      state.delecate_data = action.payload;
     },
   },
 });

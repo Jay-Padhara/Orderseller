@@ -1,4 +1,4 @@
-import React, {useRef, useState} from 'react';
+import React, {useCallback, useEffect, useRef, useState} from 'react';
 import {Text, View, StyleSheet, TouchableOpacity, Image} from 'react-native';
 import {SafeAreaView} from 'react-native-safe-area-context';
 import {appConstant} from '../../helper/appconstants';
@@ -21,15 +21,15 @@ import {Loader} from '../../Components/Loader';
 import {useDispatch} from 'react-redux';
 import {Statemodal} from '../../Components/Statemodal';
 import {Textinputs} from '../../Components/Textinputs';
-import {createcompany} from '../../Api/companyservice';
+import {createbuyers, editbuyers} from '../../Api/buyerservice';
 
-export const Companydetails = () => {
+export const Addbuyer = ({route}) => {
   const navigation = useNavigation();
   const dispatch = useDispatch();
 
   const [value, setValue] = useState(0);
   const [visible, setVisible] = useState(false);
-  const [isshow, setShow] = useState(false);
+  const [isloading, setLoading] = useState(false);
   const [statemodal, setStatemodal] = useState(false);
 
   const [gstno, setGstno] = useState();
@@ -46,6 +46,10 @@ export const Companydetails = () => {
   const [logo, setLogo] = useState();
   const [filterdata, setFilterdata] = useState(states.sort());
   const statedata = states.sort();
+
+  const [data, setData] = useState([]);
+  const [from, setFrom] = useState();
+  const [id, setId] = useState();
 
   const [errgstno, setErrGstno] = useState(false);
   const [errpanno, setErrPanno] = useState(false);
@@ -71,6 +75,39 @@ export const Companydetails = () => {
   const pincoderef = useRef(null);
   const cityref = useRef(null);
   const scrollref = useRef(null);
+
+  const handleData = useCallback(async () => {
+    data?.createdByCompany?.gstNo ? value === 0 : value === 1;
+
+    value === 0 ? setGstno(data?.gstNo) : data?.panNo;
+    setComp(data?.companyName);
+    setName(data?.name);
+    setNumber(data?.phone);
+
+    if (data && data?.addresses?.length > 0) {
+      setAddress(data.addresses[0]?.addressName || '');
+      setAddline(data.addresses[0]?.addressLine || '');
+      setLocality(data.addresses[0]?.locality || '');
+      setPincode(data.addresses[0]?.pincode || '');
+      setCity(data.addresses[0]?.city || '');
+      setState(data.addresses[0]?.state || '');
+    } else {
+      handleEmpty();
+    }
+  }, [data, value]);
+
+  useEffect(() => {
+    if (route?.params) {
+      setData(route?.params?.data?.createdByCompany);
+      setFrom(route?.params?.from);
+      setId(route?.params?.data?.createdByCompany?.id);
+      handleData();
+    } else {
+      setData(null);
+      setFrom(null);
+      setId(null);
+    }
+  }, [route?.params, handleData]);
 
   const handleEmpty = () => {
     setGstno('');
@@ -203,20 +240,20 @@ export const Companydetails = () => {
       });
   };
 
-  const handleSubmit = async () => {
+  const handleAddbuyer = async () => {
     if (await handleError()) {
-      console.log('Encountered error....');
+      console.log('Errors encountered. Unable add buyer.');
     } else {
       try {
-        setShow(true);
+        setLoading(true);
 
         const formData = new FormData();
 
         value === 0
           ? formData.append('gstNo', gstno)
           : formData.append('panNo', panno);
-        formData.append('companyName', comp);
         formData.append('name', name);
+        formData.append('companyName', comp);
         formData.append('phone', number);
         formData.append('addressName', address);
         formData.append('addressLine', addline);
@@ -225,19 +262,22 @@ export const Companydetails = () => {
         formData.append('city', city);
         formData.append('state', state);
 
-        console.log(formData, '.....');
+        console.log(formData, 'data...');
 
-        const response = await createcompany(dispatch, formData);
-        console.log(response, 'company response');
+        const response =
+          from === 'edit'
+            ? await editbuyers(dispatch, id, formData)
+            : await createbuyers(dispatch, formData);
+
+        console.log(response, 'buyer response');
 
         if (!response?.error) {
+          handleEmpty();
           handleMessage(
             appConstant.Success,
             response?.message,
             appConstant.success,
           );
-          handleEmpty();
-          navigation.navigate(appConstant.dashboard);
         } else {
           handleMessage(
             appConstant.error,
@@ -245,10 +285,11 @@ export const Companydetails = () => {
             appConstant.danger,
           );
         }
+        setLoading(false);
       } catch (error) {
         console.log(error);
       } finally {
-        setShow(false);
+        setLoading(false);
       }
     }
   };
@@ -275,9 +316,7 @@ export const Companydetails = () => {
 
   return (
     <SafeAreaView style={styles.container}>
-      <Loader visible={isshow} />
-
-      <Text style={styles.entercomp}>{appConstant.entercompany}</Text>
+      <Loader visible={isloading} />
 
       <Bottommodal
         visible={visible}
@@ -293,6 +332,18 @@ export const Companydetails = () => {
         data={filterdata}
         onChangeText={handleSearch}
       />
+
+      <View style={styles.head}>
+        <TouchableOpacity
+          style={styles.back}
+          onPress={() => navigation.goBack()}>
+          <SvgIcon.arrowleft width={rh(3.5)} height={rh(3.5)} />
+        </TouchableOpacity>
+
+        <Text style={styles.headtext}>
+          {from === 'edit' ? appConstant.editBuyer : appConstant.addBuyer}
+        </Text>
+      </View>
 
       <KeyboardAwareScrollView
         ref={scrollref}
@@ -316,10 +367,11 @@ export const Companydetails = () => {
           <TouchableOpacity
             style={styles.uploadview}
             onPress={() => setVisible(true)}>
-            <SvgIcon.upload width={rw(7.5)} height={rh(7.5)} />
-            <Text style={styles.uploadtext}>{appConstant.uploadlogo}</Text>
+            <SvgIcon.uploadlogo width={rw(7.5)} height={rh(7.5)} />
           </TouchableOpacity>
         )}
+
+        <Text style={styles.uploadtext}>{appConstant.uplogo}</Text>
 
         {errLogo ? (
           <Text style={styles.errlogo}>{appConstant.logoerr}</Text>
@@ -681,7 +733,7 @@ export const Companydetails = () => {
               <Text style={styles.state}>
                 {state ? state : appConstant.stateplace}
               </Text>
-              <SvgIcon.down_arrow width={rw(7)} height={rh(4)} />
+              <SvgIcon.down_arrow width={rw(7)} height={rh(3)} />
             </TouchableOpacity>
           </View>
         </View>
@@ -691,9 +743,9 @@ export const Companydetails = () => {
 
         <Button
           style={styles.touchsignin}
-          text={appConstant.submit}
+          text={from === 'edit' ? appConstant.editBuyer : appConstant.addBuyer}
           textstyle={styles.submit}
-          onPress={handleSubmit}
+          onPress={handleAddbuyer}
         />
       </KeyboardAwareScrollView>
     </SafeAreaView>
@@ -704,6 +756,68 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: colors.white,
+  },
+
+  head: {
+    marginTop: rh(3),
+    margin: rw(4),
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+
+  back: {
+    position: 'absolute',
+    left: 0,
+    width: rw(12),
+    height: rh(6),
+    padding: rw(2),
+    alignItems: 'center',
+    justifyContent: 'center',
+    backgroundColor: colors.white,
+    borderRadius: 20,
+    elevation: 15,
+    shadowColor: colors.labelgrey,
+    shadowOffset: {width: 0, height: 4},
+    shadowOpacity: 0.8,
+  },
+
+  headtext: {
+    color: colors.black,
+    fontFamily: fonts.bold,
+    fontSize: rf(2.3),
+  },
+
+  profile: {
+    position: 'absolute',
+    right: 60,
+    width: rw(12),
+    height: rh(6),
+    padding: rw(2),
+    alignItems: 'center',
+    justifyContent: 'center',
+    backgroundColor: colors.white,
+    borderRadius: 20,
+    elevation: 15,
+    shadowColor: colors.labelgrey,
+    shadowOffset: {width: 0, height: 4},
+    shadowOpacity: 0.8,
+  },
+
+  add: {
+    position: 'absolute',
+    right: 0,
+    width: rw(12),
+    height: rh(6),
+    padding: rw(2),
+    alignItems: 'center',
+    justifyContent: 'center',
+    backgroundColor: colors.white,
+    borderRadius: 20,
+    elevation: 15,
+    shadowColor: colors.labelgrey,
+    shadowOffset: {width: 0, height: 4},
+    shadowOpacity: 0.8,
   },
 
   entercomp: {
@@ -727,7 +841,7 @@ const styles = StyleSheet.create({
   },
 
   mainview: {
-    marginTop: rh(3),
+    marginTop: rh(2),
   },
 
   close: {
@@ -745,18 +859,16 @@ const styles = StyleSheet.create({
   uploadview: {
     alignItems: 'center',
     justifyContent: 'center',
-    padding: rh(2.3),
-    marginLeft: rw(28),
-    marginRight: rw(28),
-    marginBottom: rh(2),
-    borderRadius: 16,
+    marginRight: rw(35),
+    marginLeft: rw(35),
+    height: rh(14),
+    borderRadius: 20,
     backgroundColor: colors.grey,
   },
 
   logoview: {
     alignItems: 'center',
     justifyContent: 'center',
-    marginBottom: rh(4),
     borderRadius: 16,
   },
 
@@ -768,8 +880,11 @@ const styles = StyleSheet.create({
   },
 
   uploadtext: {
-    fontSize: rf(1.6),
-    fontFamily: fonts.medium,
+    textAlign: 'center',
+    fontSize: rf(2),
+    margin: rw(3),
+    marginTop: rw(2),
+    fontFamily: fonts.semibold,
     color: colors.black,
   },
 
@@ -786,7 +901,7 @@ const styles = StyleSheet.create({
     marginLeft: rw(1.7),
     margin: rw(1),
     color: colors.black,
-    fontFamily: fonts.bold,
+    fontFamily: fonts.semibold,
   },
 
   touchsignin: {

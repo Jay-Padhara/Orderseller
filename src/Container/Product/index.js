@@ -1,4 +1,4 @@
-import React, {useCallback, useState} from 'react';
+import React, {useCallback, useEffect, useState} from 'react';
 import {
   View,
   Text,
@@ -19,7 +19,6 @@ import {
 } from 'react-native-responsive-dimensions';
 import {appConstant} from '../../helper/appconstants';
 import {fonts} from '../../assets/fonts';
-import {Loader} from '../../Components/Loader';
 import {deleteproduct, getallproducts} from '../../Api/productservice';
 import {useDispatch, useSelector} from 'react-redux';
 import {handleMessage} from '../../helper/utils';
@@ -27,6 +26,10 @@ import {Filtermodal} from '../../Components/Filtermodal';
 import {Importcate} from '../../Components/Importcatemodal';
 import {Popupmenu} from '../../Components/Popupmenu';
 import {Delemodal} from '../../Components/Deletemodal.js';
+import {Customview} from '../../Components/Button/index.js';
+import {Categorymodal} from '../../Components/Categorymodal/index.js';
+import {getallcategory} from '../../Api/categoryservice.js';
+import {Loader} from '../../Components/Loader/index.js';
 
 export const Product = () => {
   const navigation = useNavigation();
@@ -37,11 +40,15 @@ export const Product = () => {
 
   const [product, setProduct] = useState([]);
   const [filteredproduct, setFilteredproduct] = useState([]);
-  const [isloading, setLoading] = useState(false);
   const [visible, setVisible] = useState(false);
   const [isdelmodal, setDelmodal] = useState(false);
+  const [isloading, setLoading] = useState(false);
+  const [iscatemodal, setCatemodal] = useState(false);
   const [ispopup, setPopup] = useState(false);
   const [isshow, setShow] = useState(false);
+
+  const [catelist, setCatelist] = useState([]);
+  const [filtercatelist, setFiltercatelist] = useState([]);
 
   const [selectedpro, setSelectedpro] = useState('');
   const [delid, setDelid] = useState();
@@ -60,10 +67,9 @@ export const Product = () => {
       } else {
         handleMessage(appConstant.error, response?.message, appConstant.danger);
       }
+      setLoading(false);
     } catch (error) {
       console.log(error);
-    } finally {
-      setLoading(false);
     }
   }, [dispatch, compid]);
 
@@ -72,6 +78,30 @@ export const Product = () => {
       handleProduct();
     }, [handleProduct]),
   );
+
+  // GET ALL CATEGORY
+  const handleCategory = useCallback(async () => {
+    try {
+      setLoading(true);
+
+      const response = await getallcategory(dispatch, compid);
+      console.log(response, 'category response');
+
+      if (!response?.error) {
+        setCatelist(response?.result);
+        setFiltercatelist(response?.result);
+      } else {
+        handleMessage(appConstant.error, response?.message, appConstant.danger);
+      }
+      setLoading(false);
+    } catch (error) {
+      console.log(error);
+    }
+  }, [dispatch, compid]);
+
+  useEffect(() => {
+    handleCategory();
+  }, [handleCategory]);
 
   const handleEdit = async item => {
     console.log(item);
@@ -109,10 +139,9 @@ export const Product = () => {
       } else {
         handleMessage(appConstant.error, response?.message, appConstant.danger);
       }
+      setLoading(false);
     } catch (error) {
       console.log(error);
-    } finally {
-      setLoading(false);
     }
   };
 
@@ -120,6 +149,7 @@ export const Product = () => {
     console.log(text);
     if (!text) {
       setFilteredproduct(product);
+      console.log(catelist);
     } else {
       const filterlist = product.filter(p => {
         return p?.productName.toUpperCase().includes(text?.toUpperCase());
@@ -132,8 +162,17 @@ export const Product = () => {
   return (
     <SafeAreaView style={styles.container}>
       <Loader visible={isloading} />
+      <Filtermodal
+        visible={visible}
+        onClose={() => setVisible(false)}
+        onSelect={() => setCatemodal(true)}
+      />
 
-      <Filtermodal visible={visible} onClose={() => setVisible(false)} />
+      <Categorymodal
+        visible={iscatemodal}
+        onPress={() => setCatemodal(false)}
+        data={filtercatelist}
+      />
 
       <Importcate
         visible={isshow}
@@ -239,23 +278,26 @@ export const Product = () => {
                 </View>
 
                 <View style={styles.prodesc}>
-                  <View>
-                    <Text style={styles.protext}>{appConstant.sku}</Text>
-                    <Text style={styles.protext2}>{item?.sku}</Text>
-                  </View>
+                  <Customview
+                    headstyle={styles.protext}
+                    head={appConstant.sku}
+                    text={item?.sku}
+                    textstyle={styles.protext2}
+                  />
 
-                  <View>
-                    <Text style={styles.protext}>{appConstant.unit}</Text>
-                    <Text style={styles.protext2}>{item?.unit}</Text>
-                  </View>
+                  <Customview
+                    headstyle={styles.protext}
+                    head={appConstant.unit}
+                    text={item?.unit.slice(0, 8)}
+                    textstyle={styles.protext2}
+                  />
 
-                  <View>
-                    <Text style={styles.protext}>{appConstant.price}</Text>
-                    <Text style={styles.protext2}>
-                      {appConstant.ruppee}
-                      {item?.price}
-                    </Text>
-                  </View>
+                  <Customview
+                    headstyle={styles.protext}
+                    head={appConstant.price}
+                    text={appConstant.ruppee + item?.price}
+                    textstyle={styles.protext2}
+                  />
 
                   <View>
                     <Text style={styles.protext}>{appConstant.available}</Text>
@@ -307,7 +349,7 @@ const styles = StyleSheet.create({
   text: {
     color: colors.black,
     fontFamily: fonts.bold,
-    fontSize: rf(2.4),
+    fontSize: rf(2.3),
   },
 
   back: {
@@ -366,7 +408,7 @@ const styles = StyleSheet.create({
   nocatdata: {
     color: colors.black,
     fontFamily: fonts.semibold,
-    fontSize: rf(2.8),
+    fontSize: rf(2.5),
   },
 
   contain: {
@@ -431,7 +473,7 @@ const styles = StyleSheet.create({
 
   mainview: {
     backgroundColor: colors.white,
-    width: rw(90),
+    width: rw(94),
     height: rh(30),
     borderRadius: 15,
     margin: rh(1),
@@ -455,12 +497,13 @@ const styles = StyleSheet.create({
   },
 
   categ: {
+    width: rw(59),
     marginLeft: rw(3),
   },
 
   catetext: {
     fontFamily: fonts.semibold,
-    fontSize: rf(1.9),
+    fontSize: rf(1.8),
     color: colors.black,
   },
 
@@ -482,19 +525,21 @@ const styles = StyleSheet.create({
   },
 
   prodesc: {
-    justifyContent: 'space-around',
-    alignItems: 'center',
+    justifyContent: 'space-evenly',
     flexDirection: 'row',
     margin: rw(1),
+    marginLeft: rw(2),
+    marginRight: rw(2),
   },
 
   protext: {
     color: colors.black,
     fontFamily: fonts.bold,
-    fontSize: rf(1.7),
+    fontSize: rf(1.6),
   },
 
   protext2: {
+    width: rw(20),
     color: colors.labelgrey,
     fontFamily: fonts.semibold,
     fontSize: rf(1.8),
@@ -504,12 +549,13 @@ const styles = StyleSheet.create({
     marginTop: rh(1.6),
     marginLeft: rw(5),
     marginRight: rw(1),
+    marginBottom: rh(1.5),
   },
 
   description: {
+    width: rw(80),
     fontFamily: fonts.medium,
     color: colors.labelgrey,
-    fontSize: rf(1.8),
-    marginRight: rw(3),
+    fontSize: rf(1.7),
   },
 });

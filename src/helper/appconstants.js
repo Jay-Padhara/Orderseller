@@ -11,6 +11,8 @@ export const appConstant = {
   buyer: 'Buyer',
   orders: 'Orders',
   profile: 'Profile',
+  addbuyer: 'Addbuyer',
+  viewbuyer: 'Viewbuyer',
 
   //others
   signin: 'Sign in',
@@ -36,7 +38,7 @@ export const appConstant = {
   ok: 'OK',
   entercompany: 'Enter your company detail',
   resendmessage: 'We sent you email with instructions to reset your password.',
-  uploadlogo: '"Upload your logo"',
+  uploadlogo: 'Upload your logo',
   validemail: 'Please enter valid email address',
   minlength: 'Minimum length should be of 6',
   validname: 'Please enter valid name',
@@ -54,6 +56,7 @@ export const appConstant = {
   complace: 'Company name',
   companyshop: 'Company/Shop Name:',
   compname: 'Name:',
+  cname: 'Company Name:',
   phonenumber: 'Phone Number:',
   phoneplace: 'Phone No',
   address: 'Address Name:',
@@ -101,6 +104,7 @@ export const appConstant = {
   editcate: 'Edit Category',
   nocatdata: 'No category data found',
   noprodata: 'No product data found',
+  nobuyerdata: 'No buyer list found',
   deletemessage: 'Are you sure you want to delete this Category?',
   cancel: 'Cancel',
   delete: 'Delete',
@@ -139,4 +143,34 @@ export const appConstant = {
   apply: 'Apply',
   edit: 'Edit',
   dele: 'Delete',
+
+  //BUYER SCREEN
+  buyername: 'Buyer Name:-',
+  verifybuyer: 'Verify Buyer:-',
+  status: 'Status:-',
+
+  //ADDBUYER SCREEN
+  addBuyer: 'Add Buyer',
+  editBuyer: 'Edit Buyer',
+  uplogo: 'Upload logo',
+  yes: 'Yes',
+  no: 'No',
+  active: 'Active',
+  inactive: 'Inactive',
+  view: 'View',
+
+  //VIEW BUYER
+  viewBuyer: 'View Buyer',
+  orderdetail: 'Orders Details',
+  buyerdetail: 'Buyers Details',
+  shopname: 'shop Name:- ',
+  Compname: 'company Name:- ',
+  Name: 'Name:- ',
+  orderno: 'Order Number:- ',
+  orderdate: 'Order Date:- ',
+  approxdate: 'Approx Deliver Date:- ',
+  ddate: 'Deliver Date:- ',
+  items: 'Items:- ',
+  Totalamount: 'Total Amount:- ',
+  partial: 'Partial Delivered',
 };

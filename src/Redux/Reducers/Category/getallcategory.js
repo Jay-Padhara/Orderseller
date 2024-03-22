@@ -6,8 +6,8 @@ const initialState = {
   getall_data: null,
 };
 
-const getallcategoryreducer = createSlice({
-  name: 'Getallcategoryreducer',
+export const getallcategoryreducer = createSlice({
+  name: 'getallcategoryreducer',
   initialState,
 
   reducers: {

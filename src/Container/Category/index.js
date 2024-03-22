@@ -18,7 +18,6 @@ import {colors} from '../../assets/colors';
 import {fonts} from '../../assets/fonts';
 import {appConstant} from '../../helper/appconstants';
 import {useNavigation} from '@react-navigation/native';
-import {Loader} from '../../Components/Loader';
 import {
   addnewcategory,
   deletecategories,
@@ -30,6 +29,7 @@ import {Addcatemodal} from '../../Components/Addcatemodal';
 import {Delemodal} from '../../Components/Deletemodal.js';
 import {Importcate} from '../../Components/Importcatemodal/index.js';
 import {handleMessage} from '../../helper/utils.js';
+import {Loader} from '../../Components/Loader/index.js';
 
 export const Category = () => {
   const navigation = useNavigation();
@@ -42,8 +42,8 @@ export const Category = () => {
   const [isdelmodal, setDelmodal] = useState(false);
   const [isimportmodal, setImportmodal] = useState(false);
   const [isPublish, setPublish] = useState(false);
+  const [isloading, setLoading] = useState(true);
   const [isshow, setShow] = useState(false);
-  const [isLoading, setLoading] = useState(false);
   const [catelist, setCatelist] = useState([]);
   const [filtercatedata, setFiltercatedata] = useState([]);
   const [catcode, setCatcode] = useState();
@@ -54,11 +54,9 @@ export const Category = () => {
   const coderef = useRef();
   const nameref = useRef();
 
-  // GET ALL CATEGORY
   const handleCategory = useCallback(async () => {
     try {
       setLoading(true);
-
       const response = await getallcategory(dispatch, compid);
       console.log(response, 'category response');
 
@@ -68,10 +66,9 @@ export const Category = () => {
       } else {
         handleMessage(appConstant.error, response?.message, appConstant.danger);
       }
-    } catch (error) {
-      console.log(error);
-    } finally {
       setLoading(false);
+    } catch (error) {
+      console.error(error);
     }
   }, [compid, dispatch]);
 
@@ -134,10 +131,10 @@ export const Category = () => {
       } else {
         handleMessage(appConstant.error, response?.message, appConstant.danger);
       }
+      setLoading(false);
     } catch (error) {
       console.log(error);
     } finally {
-      setLoading(false);
     }
   };
 
@@ -167,10 +164,10 @@ export const Category = () => {
       } else {
         handleMessage(appConstant.error, response?.message, appConstant.danger);
       }
+      setLoading(false);
     } catch (error) {
       console.log(error);
     } finally {
-      setLoading(false);
     }
   };
 
@@ -182,26 +179,26 @@ export const Category = () => {
       const data = {
         ids: [delid],
       };
+      console.log(data, 'data');
 
       const response = await deletecategories(dispatch, data);
       console.log(response, 'delete category response');
 
       if (!response?.error) {
+        setDelmodal(false);
         handleMessage(
           appConstant.Success,
           response?.message,
           appConstant.success,
         );
-        setDelmodal(false);
-        handleEmpty();
         handleCategory();
       } else {
         handleMessage(appConstant.error, response?.message, appConstant.danger);
+        setDelmodal(false);
       }
+      setLoading(false);
     } catch (error) {
       console.log(error);
-    } finally {
-      setLoading(false);
     }
   };
 
@@ -219,7 +216,7 @@ export const Category = () => {
 
   return (
     <SafeAreaView style={styles.container}>
-      <Loader visible={isLoading} />
+      <Loader visible={isloading} />
 
       <Addcatemodal
         ref1={coderef}
@@ -354,7 +351,7 @@ const styles = StyleSheet.create({
   text: {
     color: colors.black,
     fontFamily: fonts.bold,
-    fontSize: rf(2.4),
+    fontSize: rf(2.3),
   },
 
   back: {
@@ -483,6 +480,7 @@ const styles = StyleSheet.create({
   },
 
   cate: {
+    width: rw(80),
     margin: rw(1),
     marginTop: rh(1.5),
   },

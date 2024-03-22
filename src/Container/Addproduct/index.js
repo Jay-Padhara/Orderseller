@@ -226,7 +226,6 @@ export const Addproduct = ({route}) => {
     console.log(text, '...');
     setCategoryname(text?.categoryName);
     setCategorycode(text?.id);
-    console.log(categorycode, 'code');
     setShow(false);
     setErrcategory(false);
     setFiltercatelist(catelist);
@@ -267,6 +266,7 @@ export const Addproduct = ({route}) => {
             appConstant.danger,
           );
         }
+        setLoading(false);
       } catch (error) {
         console.log(error);
       } finally {
@@ -313,6 +313,7 @@ export const Addproduct = ({route}) => {
             appConstant.danger,
           );
         }
+        setLoading(false);
       } catch (error) {
         console.log(error);
       } finally {
@@ -389,7 +390,6 @@ export const Addproduct = ({route}) => {
           <Textinputs
             refe={skuref}
             value={sku}
-            placeholder={appConstant.skuplace}
             onChangeText={text => {
               !text
                 ? setErrSku(false)
@@ -421,7 +421,7 @@ export const Addproduct = ({route}) => {
             style={styles.catetextin}
             onPress={() => setShow(true)}>
             <Text style={styles.cate}>
-              {categoryname ? categoryname : appConstant.category}
+              {categoryname ? categoryname : null}
             </Text>
             <SvgIcon.down_arrow width={rw(9)} height={rh(4)} />
           </TouchableOpacity>
@@ -435,7 +435,7 @@ export const Addproduct = ({route}) => {
           <Textinputs
             refe={nameref}
             value={name}
-            placeholder={appConstant.productname}
+            p
             onChangeText={text => {
               !text
                 ? setErrName(false)
@@ -474,7 +474,6 @@ export const Addproduct = ({route}) => {
               <Textinputs
                 refe={priceref}
                 value={price}
-                placeholder={appConstant.priceplace}
                 onChangeText={text => {
                   !text
                     ? setErrPrice(false)
@@ -509,7 +508,6 @@ export const Addproduct = ({route}) => {
             <Textinputs
               refe={unitref}
               value={unit}
-              placeholder={appConstant.unitplace}
               onChangeText={text => {
                 !text
                   ? setErrUnit(false)
@@ -541,7 +539,6 @@ export const Addproduct = ({route}) => {
           <Textinputs
             refe={descref}
             value={description}
-            placeholder={appConstant.desc}
             onChangeText={text => {
               !text
                 ? setErrDescription(false)
@@ -617,7 +614,7 @@ const styles = StyleSheet.create({
   text: {
     color: colors.black,
     fontFamily: fonts.bold,
-    fontSize: rf(2.4),
+    fontSize: rf(2.3),
   },
 
   imgtext: {
@@ -721,14 +718,14 @@ const styles = StyleSheet.create({
   skutxt: {
     color: colors.labelgrey,
     fontFamily: fonts.semibold,
-    fontSize: rf(2.1),
+    fontSize: rf(2),
     margin: rw(2),
   },
 
   prtxt: {
     color: colors.labelgrey,
     fontFamily: fonts.semibold,
-    fontSize: rf(2.1),
+    fontSize: rf(2),
     margin: rw(2),
   },
 
@@ -747,7 +744,7 @@ const styles = StyleSheet.create({
   available: {
     color: colors.labelgrey,
     fontFamily: fonts.semibold,
-    fontSize: rf(2.3),
+    fontSize: rf(2.1),
   },
 
   textin: {

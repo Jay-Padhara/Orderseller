@@ -31,14 +31,18 @@ async function network() {
 
 axiosinstance.interceptors.request.use(
   async config => {
-    if (await network()) {
-      config.headers['Content-Type'] = config.isMultipart
-        ? 'multipart/form-data'
-        : 'application/json';
+    try {
+      if (await network()) {
+        config.headers['Content-Type'] = config.isMultipart
+          ? 'multipart/form-data'
+          : 'application/json';
 
-      return config;
-    } else {
-      return Promise.reject('No internet connection');
+        return config;
+      } else {
+        throw new Error('No internet connection');
+      }
+    } catch (error) {
+      return Promise.reject(error);
     }
   },
   error => {
@@ -51,7 +55,7 @@ axiosinstance.interceptors.response.use(
     return response?.data;
   },
   error => {
-    console.log('main error log--------', error, error?.response?.data);
+    console.log('main error log--------', error, error?.response);
     if (error?.response?.data) {
       return Promise.reject(error?.response?.data);
     } else {

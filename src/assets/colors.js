@@ -12,4 +12,5 @@ export const colors = {
   lightgrey: 'rgba(245, 245, 245, 1)',
   extralightred: 'rgba(237, 28, 23, 0.2)',
   lightblack1: 'rgba(0, 0, 0, 0.3)',
+  skyblue: 'skyblue',
 };

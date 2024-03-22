@@ -13,6 +13,7 @@ export const appConstant = {
   profile: 'Profile',
   addbuyer: 'Addbuyer',
   viewbuyer: 'Viewbuyer',
+  buyerrequest: 'Buyerrequest',
 
   //others
   signin: 'Sign in',

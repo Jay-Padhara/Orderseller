@@ -76,9 +76,8 @@ export const Categorymodal = ({
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    alignItems: 'center',
     justifyContent: 'center',
-    backgroundColor: 'rgba(0, 0, 0, 0.2)',
+    backgroundColor: colors.lightblack1,
   },
 
   head: {

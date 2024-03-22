@@ -24,6 +24,11 @@ import {
 
 import {URLS} from './apiConstants';
 import Api from './index';
+import {
+  deletebuyer,
+  deletebuyerfailed,
+  deletebuyersuccess,
+} from '../Redux/Reducers/Buyer/deletebuyerreducer';
 
 export const getallbuyers = async dispatch => {
   try {
@@ -103,6 +108,24 @@ export const changebuyerstatus = async (dispatch, id, status) => {
   } catch (error) {
     console.log(error);
     dispatch(changestatusfailed(error));
+    return error;
+  }
+};
+
+export const deletebuyers = async (dispatch, id) => {
+  try {
+    dispatch(deletebuyer());
+    const response = await Api.delete(`${URLS.DELETEBUYER}${id}`);
+    console.log(response, 'delete buyer response');
+
+    if (!response?.error) {
+      dispatch(deletebuyersuccess(response));
+    } else {
+      dispatch(deletebuyerfailed(response?.message));
+    }
+    return response;
+  } catch (error) {
+    dispatch(deletebuyerfailed(error));
     return error;
   }
 };

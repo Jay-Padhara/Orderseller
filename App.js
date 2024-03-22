@@ -15,7 +15,7 @@ export default function App() {
   useEffect(() => {
     setTimeout(async () => {
       SplashScreen.hide();
-    }, 2000);
+    }, 1100);
   }, []);
 
   return (

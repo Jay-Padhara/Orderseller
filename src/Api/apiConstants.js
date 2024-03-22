@@ -15,5 +15,6 @@ export const URLS = {
   GETALLBUYER: '/companyRelations/getRelations?buyerLists=true',
   CRAETEBUYER: '/company/createbuyer',
   EDITBUYER: '/company/',
+  DELETEBUYER: '/company/',
   INACTIVEBUYER: '/companyRelations/acceptRequest/',
 };

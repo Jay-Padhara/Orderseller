@@ -23,17 +23,24 @@ import {Popupmenu} from '../../Components/Popupmenu';
 import {Loader} from '../../Components/Loader';
 import {useDispatch} from 'react-redux';
 import {handleMessage} from '../../helper/utils';
-import {changebuyerstatus, getallbuyers} from '../../Api/buyerservice';
+import {
+  changebuyerstatus,
+  deletebuyers,
+  getallbuyers,
+} from '../../Api/buyerservice';
+import {Delemodal} from '../../Components/Deletemodal.js';
 
 export const Buyer = () => {
   const navigation = useNavigation();
   const dispatch = useDispatch();
 
   const [ispopup, setPopup] = useState(false);
+  const [visible, setVisible] = useState(false);
   const [isloading, setLoading] = useState(false);
   const [companylist, setCompanylist] = useState([]);
   const [filtercompanylist, setFiltercompanylist] = useState([]);
   const [selectedbuyer, setSelectedbuyer] = useState('');
+  const [id, setId] = useState();
 
   const handleCompany = useCallback(async () => {
     try {
@@ -111,6 +118,33 @@ export const Buyer = () => {
     navigation.navigate(appConstant.addbuyer, {data: item, from: 'edit'});
   };
 
+  const handleDelete = async () => {
+    try {
+      setLoading(true);
+      setSelectedbuyer('');
+
+      const response = await deletebuyers(dispatch, id);
+      console.log(response, 'delete buyer response');
+
+      if (!response?.error) {
+        handleMessage(
+          appConstant.Success,
+          response?.message,
+          appConstant.success,
+        );
+        setVisible(false);
+        handleCompany();
+      } else {
+        handleMessage(appConstant.error, response?.message, appConstant.danger);
+      }
+      setLoading(false);
+    } catch (error) {
+      console.error(error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
   return (
     <SafeAreaView style={styles.container}>
       <Loader visible={isloading} />
@@ -123,7 +157,9 @@ export const Buyer = () => {
         </TouchableOpacity>
 
         <Text style={styles.text}>{appConstant.buyer}</Text>
-        <TouchableOpacity style={styles.profile}>
+        <TouchableOpacity
+          style={styles.profile}
+          onPress={() => navigation.navigate(appConstant.buyerrequest)}>
           <SvgIcon.prologo width={rh(3.6)} height={rh(3.6)} />
         </TouchableOpacity>
 
@@ -176,6 +212,12 @@ export const Buyer = () => {
                     textstyle={styles.btext}
                   />
 
+                  <Delemodal
+                    visible={visible}
+                    onCancel={() => setVisible(false)}
+                    onPress={handleDelete}
+                  />
+
                   <TouchableOpacity
                     style={styles.dot}
                     onPress={() => {
@@ -194,6 +236,11 @@ export const Buyer = () => {
                     status={item?.isActive}
                     setPopup={() => setSelectedbuyer()}
                     onEdit={() => handleEdit(item)}
+                    onDelete={() => {
+                      setId(item?.createdByCompany?.id);
+                      setSelectedbuyer('');
+                      setVisible(true);
+                    }}
                     onView={() => {
                       setSelectedbuyer('');
                       navigation.navigate(appConstant.viewbuyer, {data: item});

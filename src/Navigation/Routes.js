@@ -20,12 +20,13 @@ import {appConstant} from '../helper/appconstants';
 import {handleMessage} from '../helper/utils';
 import {Addbuyer} from '../Container/Addbuyer';
 import {Viewbuyer} from '../Container/Viewbuyer';
+import {Buyerrequest} from '../Container/Buyerrequest';
 
 export const Routes = () => {
   const Stack = createNativeStackNavigator();
   const dispatch = useDispatch();
 
-  const [loading, setLoading] = useState(true);
+  const [loading, setLoading] = useState(false);
   const [screen, setScreen] = useState(appConstant.login);
 
   useEffect(() => {
@@ -34,12 +35,11 @@ export const Routes = () => {
 
   const handleUser = useCallback(async () => {
     try {
+      setLoading(true);
       const mailpass = await AsyncStorage.getItem('Data');
 
       if (mailpass) {
         const data = mailpass;
-
-        setLoading(true);
 
         const response = await login(dispatch, data);
         console.log(response, 'user login response');
@@ -82,6 +82,7 @@ export const Routes = () => {
           <Stack.Screen name="Buyer" component={Buyer} />
           <Stack.Screen name="Addbuyer" component={Addbuyer} />
           <Stack.Screen name="Viewbuyer" component={Viewbuyer} />
+          <Stack.Screen name="Buyerrequest" component={Buyerrequest} />
           <Stack.Screen name="Orders" component={Orders} />
           <Stack.Screen name="Profile" component={Profile} />
         </Stack.Navigator>

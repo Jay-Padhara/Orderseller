@@ -964,11 +964,12 @@ const styles = StyleSheet.create({
   },
 
   state: {
+    width: rw(30),
     color: colors.black,
     fontFamily: fonts.medium,
     backgroundColor: colors.grey,
     borderRadius: 13,
-    fontSize: rf(1.9),
+    fontSize: rf(1.8),
   },
 
   phonetext: {

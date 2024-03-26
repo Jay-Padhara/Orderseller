@@ -47,6 +47,17 @@ import prologo from './Svgs/prologo.svg';
 import uploadlogo from './Svgs/uploadlogo.svg';
 import active from './Svgs/active.svg';
 import up_arrow from './Svgs/up_arrow.svg';
+import paddress from './Svgs/paddress.svg';
+import pavtar from './Svgs/pavtar.svg';
+import pcomp from './Svgs/pcomp.svg';
+import plock from './Svgs/plock.svg';
+import one from './Svgs/one.svg';
+import inc from './Svgs/inc.svg';
+import dec from './Svgs/dec.svg';
+import two from './Svgs/two.svg';
+import three from './Svgs/three.svg';
+import calender from './Svgs/calender.svg';
+import whiteplus from './Svgs/whiteplus.svg';
 
 export const SvgIcon = {
   avtar,
@@ -98,4 +109,15 @@ export const SvgIcon = {
   uploadlogo,
   active,
   up_arrow,
+  paddress,
+  plock,
+  pavtar,
+  pcomp,
+  one,
+  inc,
+  dec,
+  two,
+  three,
+  calender,
+  whiteplus,
 };

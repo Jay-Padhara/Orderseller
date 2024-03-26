@@ -14,6 +14,7 @@ export const appConstant = {
   addbuyer: 'Addbuyer',
   viewbuyer: 'Viewbuyer',
   buyerrequest: 'Buyerrequest',
+  addOrder: 'Addorder',
 
   //others
   signin: 'Sign in',
@@ -106,7 +107,8 @@ export const appConstant = {
   nocatdata: 'No category data found',
   noprodata: 'No product data found',
   nobuyerdata: 'No buyer list found',
-  deletemessage: 'Are you sure you want to delete this Category?',
+  deletemessage: 'Are you sure you want to delete this category?',
+  delemessage: 'Are you sure you want to delete this product?',
   cancel: 'Cancel',
   delete: 'Delete',
   importcategory: 'Import Category',
@@ -174,4 +176,39 @@ export const appConstant = {
   items: 'Items:- ',
   Totalamount: 'Total Amount:- ',
   partial: 'Partial Delivered',
+  delmessage: 'Are you sure you want to delete this buyer?',
+
+  //BUYER REQUEST
+  request: 'Buyer Request',
+  accept: 'Accept',
+  reject: 'Reject',
+  norequestdata: 'No buyer request found',
+  delerequest: 'Are you sure you want to reject this buyer?',
+
+  //PROFILE
+  myprofile: 'My Profile',
+  compdetails: 'Company Details',
+  changepass: 'Change Password',
+  addres: 'Address',
+  joindate: 'Joined Date',
+
+  //ORDER
+  order: 'Order',
+  addorder: 'Add Order',
+  noorderdata: 'No order data found',
+  one: '1',
+  two: '2',
+  three: '3',
+  bcompany: 'Buyer’s Company:',
+  productName: 'Product Name: ',
+  next: 'Next',
+  notes: 'Notes',
+  enternotes: 'Enter notes',
+  back: 'Back',
+  deliveryadd: 'Delivery Address',
+  billingadd: 'Billing Address',
+  orderstatus: 'Order Status',
+  approxddate: 'Approx Deliver Date ',
+  dateplace: 'DD-MM-YYYY',
+  statuss: 'Status',
 };

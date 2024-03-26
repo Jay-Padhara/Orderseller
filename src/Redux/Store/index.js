@@ -12,6 +12,9 @@ import addproduct from '../Reducers/Product/addproduct';
 import deleteproductreducer from '../Reducers/Product/deleteproduct';
 import createbuyerreducer from '../Reducers/Buyer/createbuyerreducer';
 import changestatusreducer from '../Reducers/Buyer/changestatusreducer';
+import buyerrequestreducer from '../Reducers/Buyer/buyerrequestreducer';
+import acceptrejectreducer from '../Reducers/Buyer/acceptrejectreducer';
+import getallorderreducer from '../Reducers/Orders/getallorderreducer';
 
 export const store = configureStore({
   reducer: {
@@ -28,5 +31,8 @@ export const store = configureStore({
     deleteproduct: deleteproductreducer,
     createbuyer: createbuyerreducer,
     chnagestatus: changestatusreducer,
+    buyerrequest: buyerrequestreducer,
+    acceptreject: acceptrejectreducer,
+    getallorder: getallorderreducer,
   },
 });

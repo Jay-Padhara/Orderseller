@@ -149,6 +149,14 @@ export const Buyer = () => {
     <SafeAreaView style={styles.container}>
       <Loader visible={isloading} />
 
+      <Delemodal
+        visible={visible}
+        onCancel={() => setVisible(false)}
+        onPress={handleDelete}
+        message={appConstant.delmessage}
+        buttontext={appConstant.dele}
+      />
+
       <View style={styles.head}>
         <TouchableOpacity
           style={styles.back}
@@ -200,7 +208,7 @@ export const Buyer = () => {
                     style={styles.comp}
                     headstyle={styles.htext}
                     head={appConstant.cname}
-                    text={item?.company?.companyName}
+                    text={item?.createdByCompany?.companyName}
                     textstyle={styles.btext}
                   />
 
@@ -210,12 +218,6 @@ export const Buyer = () => {
                     head={appConstant.buyername}
                     text={item?.createdByCompany?.name}
                     textstyle={styles.btext}
-                  />
-
-                  <Delemodal
-                    visible={visible}
-                    onCancel={() => setVisible(false)}
-                    onPress={handleDelete}
                   />
 
                   <TouchableOpacity
@@ -243,7 +245,9 @@ export const Buyer = () => {
                     }}
                     onView={() => {
                       setSelectedbuyer('');
-                      navigation.navigate(appConstant.viewbuyer, {data: item});
+                      navigation.navigate(appConstant.viewbuyer, {
+                        data: item,
+                      });
                     }}
                     onChangestatus={() => handleStatus(item)}
                   />
@@ -263,7 +267,7 @@ export const Buyer = () => {
                     headstyle={styles.htext}
                     head={appConstant.verifybuyer}
                     text={
-                      item?.company?.isVerified
+                      item?.createdByCompany?.isVerified
                         ? appConstant.yes
                         : appConstant.no
                     }

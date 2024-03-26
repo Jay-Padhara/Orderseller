@@ -6,6 +6,7 @@ export const colors = {
   red: '#FF0000',
   labelgrey: '#808080',
   green: '#006400',
+  lightgreen: 'rgba(35, 207, 95, 1)',
   lightprim: 'rgba(251, 126, 24, 0.3)',
   lightred: 'rgba(237, 28, 23, 0.3)',
   lightblack: 'rgba(194, 179, 165, 0.2)',

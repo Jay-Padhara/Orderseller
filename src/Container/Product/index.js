@@ -186,6 +186,8 @@ export const Product = () => {
         visible={isdelmodal}
         onCancel={() => setDelmodal(false)}
         onPress={handleDeletepro}
+        message={appConstant.delemessage}
+        buttontext={appConstant.dele}
       />
 
       <View style={styles.head}>

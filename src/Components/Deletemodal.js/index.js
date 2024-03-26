@@ -17,7 +17,13 @@ import {fonts} from '../../assets/fonts';
 import {appConstant} from '../../helper/appconstants';
 import {SvgIcon} from '../../assets/SvgIcon';
 
-export const Delemodal = ({visible, onCancel, onPress}) => {
+export const Delemodal = ({
+  visible,
+  onCancel,
+  onPress,
+  message,
+  buttontext,
+}) => {
   return (
     <>
       <StatusBar
@@ -32,7 +38,7 @@ export const Delemodal = ({visible, onCancel, onPress}) => {
               <View style={styles.del}>
                 <SvgIcon.dele width={rw(7)} height={rh(7)} />
               </View>
-              <Text style={styles.head}>{appConstant.deletemessage}</Text>
+              <Text style={styles.head}>{message}</Text>
 
               <View style={styles.canceldel}>
                 <View style={styles.cancelview}>
@@ -41,7 +47,7 @@ export const Delemodal = ({visible, onCancel, onPress}) => {
                   </TouchableOpacity>
                 </View>
                 <TouchableOpacity style={styles.delete} onPress={onPress}>
-                  <Text style={styles.deltext}>{appConstant.delete}</Text>
+                  <Text style={styles.deltext}>{buttontext}</Text>
                 </TouchableOpacity>
               </View>
             </View>

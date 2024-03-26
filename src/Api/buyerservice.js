@@ -24,11 +24,24 @@ import {
 
 import {URLS} from './apiConstants';
 import Api from './index';
+
 import {
   deletebuyer,
   deletebuyerfailed,
   deletebuyersuccess,
 } from '../Redux/Reducers/Buyer/deletebuyerreducer';
+
+import {
+  buyerrequest,
+  buyerrequestfailed,
+  buyerrequestsuccess,
+} from '../Redux/Reducers/Buyer/buyerrequestreducer';
+
+import {
+  requeststatus,
+  requeststatusfailed,
+  requeststatussuccess,
+} from '../Redux/Reducers/Buyer/acceptrejectreducer';
 
 export const getallbuyers = async dispatch => {
   try {
@@ -126,6 +139,42 @@ export const deletebuyers = async (dispatch, id) => {
     return response;
   } catch (error) {
     dispatch(deletebuyerfailed(error));
+    return error;
+  }
+};
+
+export const buyerrequests = async dispatch => {
+  try {
+    dispatch(buyerrequest());
+    const response = await Api.get(URLS.BUYERREQUEST);
+    console.log(response, 'buyer request response');
+
+    if (!response?.error) {
+      dispatch(buyerrequestsuccess(response));
+    } else {
+      dispatch(buyerrequestfailed(response?.message));
+    }
+    return response;
+  } catch (error) {
+    dispatch(buyerrequestfailed(error));
+    return error;
+  }
+};
+
+export const acceptrejectrequest = async (dispatch, id, status) => {
+  try {
+    dispatch(requeststatus());
+    const response = await Api.post(`${URLS.REQUESTSTATUS}${id}?${status}`);
+    console.log(response, 'request status response');
+
+    if (!response?.error) {
+      dispatch(requeststatussuccess(response));
+    } else {
+      dispatch(requeststatusfailed(response?.message));
+    }
+    return response;
+  } catch (error) {
+    dispatch(requeststatusfailed(error));
     return error;
   }
 };

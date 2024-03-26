@@ -57,6 +57,7 @@ export const Category = () => {
   const handleCategory = useCallback(async () => {
     try {
       setLoading(true);
+
       const response = await getallcategory(dispatch, compid);
       console.log(response, 'category response');
 
@@ -70,7 +71,7 @@ export const Category = () => {
     } catch (error) {
       console.error(error);
     }
-  }, [compid, dispatch]);
+  }, [dispatch, compid]);
 
   useEffect(() => {
     handleCategory();
@@ -248,6 +249,8 @@ export const Category = () => {
         visible={isdelmodal}
         onCancel={() => setDelmodal(false)}
         onPress={handleDelete}
+        message={appConstant.deletemessage}
+        buttontext={appConstant.dele}
       />
 
       <Importcate

@@ -17,4 +17,7 @@ export const URLS = {
   EDITBUYER: '/company/',
   DELETEBUYER: '/company/',
   INACTIVEBUYER: '/companyRelations/acceptRequest/',
+  BUYERREQUEST: '/companyRelations/getRelations?isRequested=true',
+  REQUESTSTATUS: '/companyRelations/acceptRequest/',
+  GETALLORDER: '/order',
 };

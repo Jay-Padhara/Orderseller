@@ -21,6 +21,7 @@ import {handleMessage} from '../helper/utils';
 import {Addbuyer} from '../Container/Addbuyer';
 import {Viewbuyer} from '../Container/Viewbuyer';
 import {Buyerrequest} from '../Container/Buyerrequest';
+import {Addorder} from '../Container/Addorder';
 
 export const Routes = () => {
   const Stack = createNativeStackNavigator();
@@ -58,10 +59,9 @@ export const Routes = () => {
           );
         }
       }
+      setLoading(false);
     } catch (error) {
       console.log(error);
-    } finally {
-      setLoading(false);
     }
   }, [dispatch]);
 
@@ -84,6 +84,7 @@ export const Routes = () => {
           <Stack.Screen name="Viewbuyer" component={Viewbuyer} />
           <Stack.Screen name="Buyerrequest" component={Buyerrequest} />
           <Stack.Screen name="Orders" component={Orders} />
+          <Stack.Screen name="Addorder" component={Addorder} />
           <Stack.Screen name="Profile" component={Profile} />
         </Stack.Navigator>
       )}

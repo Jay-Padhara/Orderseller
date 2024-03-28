@@ -15,6 +15,7 @@ export const appConstant = {
   viewbuyer: 'Viewbuyer',
   buyerrequest: 'Buyerrequest',
   addOrder: 'Addorder',
+  createadd: 'Createaddress',
 
   //others
   signin: 'Sign in',
@@ -200,7 +201,7 @@ export const appConstant = {
   two: '2',
   three: '3',
   bcompany: 'Buyer’s Company:',
-  productName: 'Product Name: ',
+  productName: 'Product Name:',
   next: 'Next',
   notes: 'Notes',
   enternotes: 'Enter notes',
@@ -211,4 +212,21 @@ export const appConstant = {
   approxddate: 'Approx Deliver Date ',
   dateplace: 'DD-MM-YYYY',
   statuss: 'Status',
+  orderconfirm: 'Order Confirmation',
+  buyercompname: 'Buyer Company Name:',
+  qty: 'Qty',
+  total: 'Total Amount: ',
+  shipping: 'Shipping charges: ',
+  selectbuyer: 'Select Buyer',
+  selectstatus: 'Select Status',
+  selectqty: 'Select Quantity',
+  selectproduct: 'Select Product',
+  errnote: 'Invalid Notes',
+  errapproxdate: 'Select approx date',
+  errdeliveryadd: 'Select delivery address',
+  errbillingadd: 'Select billing address',
+  errstatus: 'Select status',
+
+  //CREATEADDRESS
+  createAdd: 'Create Address',
 };

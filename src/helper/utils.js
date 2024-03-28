@@ -43,6 +43,13 @@ export const states = [
   'Puducherry',
 ];
 
+export const status = [
+  'Pending',
+  'Partial Delivered',
+  'Delivered',
+  'Cancelled',
+];
+
 export const Images = [
   'https://www.thespruce.com/thmb/Ft5dokShWCaRm1Hb4AY4IuL8wNM=/1500x0/filters:no_upscale():max_bytes(150000):strip_icc()/Mercedes-White-Small-Living-Room-58a8c6dc3df78c345b35e545.jpg',
   'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTinGCfuvtIzNvb6AsRFE7LtRJrTEKDxVxe6g&usqp=CAU',

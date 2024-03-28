@@ -22,6 +22,7 @@ import {Addbuyer} from '../Container/Addbuyer';
 import {Viewbuyer} from '../Container/Viewbuyer';
 import {Buyerrequest} from '../Container/Buyerrequest';
 import {Addorder} from '../Container/Addorder';
+import {Createaddress} from '../Container/Createaddress';
 
 export const Routes = () => {
   const Stack = createNativeStackNavigator();
@@ -86,6 +87,7 @@ export const Routes = () => {
           <Stack.Screen name="Orders" component={Orders} />
           <Stack.Screen name="Addorder" component={Addorder} />
           <Stack.Screen name="Profile" component={Profile} />
+          <Stack.Screen name="Createaddress" component={Createaddress} />
         </Stack.Navigator>
       )}
       {loading && <Loader visible={loading} />}

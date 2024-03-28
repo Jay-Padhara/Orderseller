@@ -1,4 +1,3 @@
-import React from 'react';
 import {
   View,
   Text,
@@ -9,6 +8,7 @@ import {
   TextInput,
   StatusBar,
 } from 'react-native';
+import React from 'react';
 import {SvgIcon} from '../../assets/SvgIcon';
 import {appConstant} from '../../helper/appconstants';
 import {fonts} from '../../assets/fonts';
@@ -19,15 +19,14 @@ import {
 } from 'react-native-responsive-dimensions';
 import {colors} from '../../assets/colors';
 
-export const Categorymodal = ({
+export const Buyermodal = ({
   visible,
   data,
   onPress,
   onselect,
   onChangeText,
-  heading,
   nocategory,
-  itemkey,
+  type,
 }) => {
   return (
     <>
@@ -42,7 +41,9 @@ export const Categorymodal = ({
             <TouchableOpacity style={styles.close} onPress={onPress}>
               <SvgIcon.close width={rw(5)} height={rh(5)} />
             </TouchableOpacity>
-            <Text style={styles.text}>{heading}</Text>
+            <Text style={styles.text}>
+              {type ? appConstant.selectproduct : appConstant.selectbuyer}
+            </Text>
             <TextInput
               placeholder={appConstant.searchhere}
               placeholderTextColor={colors.labelgrey}
@@ -63,7 +64,11 @@ export const Categorymodal = ({
                 return (
                   <>
                     <TouchableOpacity onPress={() => onselect(item)}>
-                      <Text style={styles.statetext}>{item[itemkey]}</Text>
+                      <Text style={styles.statetext}>
+                        {type
+                          ? item?.productName
+                          : item?.createdByCompany?.companyName}
+                      </Text>
                     </TouchableOpacity>
                   </>
                 );

@@ -6,11 +6,9 @@ import {
   TouchableOpacity,
   StyleSheet,
   FlatList,
-  TextInput,
   StatusBar,
 } from 'react-native';
 import {SvgIcon} from '../../assets/SvgIcon';
-import {appConstant} from '../../helper/appconstants';
 import {fonts} from '../../assets/fonts';
 import {
   responsiveFontSize as rf,
@@ -18,17 +16,9 @@ import {
   responsiveWidth as rw,
 } from 'react-native-responsive-dimensions';
 import {colors} from '../../assets/colors';
+import {status} from '../../helper/utils';
 
-export const Categorymodal = ({
-  visible,
-  data,
-  onPress,
-  onselect,
-  onChangeText,
-  heading,
-  nocategory,
-  itemkey,
-}) => {
+export const Statusmodal = ({visible, onPress, onselect, heading}) => {
   return (
     <>
       <StatusBar
@@ -43,31 +33,20 @@ export const Categorymodal = ({
               <SvgIcon.close width={rw(5)} height={rh(5)} />
             </TouchableOpacity>
             <Text style={styles.text}>{heading}</Text>
-            <TextInput
-              placeholder={appConstant.searchhere}
-              placeholderTextColor={colors.labelgrey}
-              style={styles.textin}
-              onChangeText={text => onChangeText(text)}
-            />
 
             <FlatList
-              showsVerticalScrollIndicator={false}
-              data={data}
+              data={status}
               keyExtractor={(item, index) => index.toString()}
-              ListEmptyComponent={
-                <View style={styles.nocat}>
-                  <Text style={styles.nocatdata}>{nocategory}</Text>
-                </View>
-              }
               renderItem={({item}) => {
                 return (
                   <>
                     <TouchableOpacity onPress={() => onselect(item)}>
-                      <Text style={styles.statetext}>{item[itemkey]}</Text>
+                      <Text style={styles.statetext}>{item}</Text>
                     </TouchableOpacity>
                   </>
                 );
               }}
+              showsVerticalScrollIndicator={false}
             />
           </View>
         </View>
@@ -90,7 +69,7 @@ const styles = StyleSheet.create({
     bottom: 0,
     right: 0,
     left: 0,
-    height: rh(40),
+    height: rh(36),
     borderTopLeftRadius: 25,
     borderTopRightRadius: 25,
   },
@@ -108,44 +87,11 @@ const styles = StyleSheet.create({
     color: colors.black,
   },
 
-  statelist: {
-    margin: rh(3),
-  },
-
   statetext: {
     color: colors.black,
     fontFamily: fonts.semibold,
     fontSize: rf(2.2),
     margin: rh(2),
     marginTop: rh(2),
-  },
-
-  textin: {
-    padding: rw(3.4),
-    width: rw(86),
-    color: colors.black,
-    fontSize: rf(2),
-    fontFamily: fonts.medium,
-    backgroundColor: colors.white,
-    borderRadius: 20,
-    elevation: 10,
-    shadowColor: colors.labelgrey,
-    shadowOffset: {width: 0, height: 4},
-    shadowOpacity: 0.8,
-  },
-
-  list: {
-    marginBottom: rh(1),
-  },
-
-  nocat: {
-    alignItems: 'center',
-    marginTop: rh(10),
-  },
-
-  nocatdata: {
-    color: colors.black,
-    fontFamily: fonts.semibold,
-    fontSize: rf(2.8),
   },
 });

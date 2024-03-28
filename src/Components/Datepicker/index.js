@@ -1,13 +1,25 @@
 import React from 'react';
-import {StatusBar, View, Modal, StyleSheet} from 'react-native';
+import {
+  StatusBar,
+  View,
+  Modal,
+  StyleSheet,
+  TouchableWithoutFeedback,
+} from 'react-native';
 import {colors} from '../../assets/colors';
 import {
-  responsiveHeight as rh,
   responsiveWidth as rw,
+  responsiveFontSize as rf,
 } from 'react-native-responsive-dimensions';
-import DatePicker from 'react-native-modern-datepicker';
+import DatePicker, {getToday} from 'react-native-modern-datepicker';
 
-export const Datepicker = ({visible}) => {
+export const Datepicker = ({
+  visible,
+  close,
+  selecteddate,
+  onclose,
+  selected,
+}) => {
   return (
     <>
       <StatusBar
@@ -15,12 +27,31 @@ export const Datepicker = ({visible}) => {
         translucent={true}
         barStyle="dark-content"
       />
-      <Modal transparent animationType="fade" visible={visible}>
-        <View style={styles.conatiner}>
-          <View style={styles.main}>
-            <DatePicker />
+      <Modal
+        transparent
+        animationType="fade"
+        visible={visible}
+        onRequestClose={close}>
+        <TouchableWithoutFeedback onPress={onclose}>
+          <View style={styles.conatiner}>
+            <View style={styles.main}>
+              <DatePicker
+                onDateChange={selecteddate}
+                options={{
+                  backgroundColor: colors.white,
+                  textHeaderColor: colors.primary,
+                  textDefaultColor: colors.black,
+                  selectedTextColor: '#fff',
+                  mainColor: '#F4722B',
+                  textSecondaryColor: colors.primary,
+                  textFontSize: rf(2),
+                }}
+                selected={selected ? selected : getToday()}
+                mode="calendar"
+              />
+            </View>
           </View>
-        </View>
+        </TouchableWithoutFeedback>
       </Modal>
     </>
   );
@@ -36,7 +67,6 @@ const styles = StyleSheet.create({
 
   main: {
     width: rw(90),
-    height: rh(50),
     backgroundColor: colors.white,
   },
 });

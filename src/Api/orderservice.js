@@ -1,4 +1,10 @@
 import {
+  createorder,
+  createorderfailed,
+  createordersuccess,
+} from '../Redux/Reducers/Orders/createorderreducer';
+
+import {
   getallorder,
   getallorderfailed,
   getallordersuccess,
@@ -22,6 +28,25 @@ export const getallorders = async dispatch => {
   } catch (error) {
     console.error(error);
     dispatch(getallorderfailed(error));
+    return error;
+  }
+};
+
+export const createorders = async dispatch => {
+  try {
+    dispatch(createorder());
+    const response = await Api.post(URLS.CREATEORDER);
+    console.log(response, 'create order response');
+
+    if (!response?.error) {
+      dispatch(createordersuccess(response));
+    } else {
+      dispatch(createorderfailed(response?.message));
+    }
+    return response;
+  } catch (error) {
+    console.error(error);
+    dispatch(createorderfailed(error));
     return error;
   }
 };

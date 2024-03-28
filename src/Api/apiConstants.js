@@ -20,4 +20,6 @@ export const URLS = {
   BUYERREQUEST: '/companyRelations/getRelations?isRequested=true',
   REQUESTSTATUS: '/companyRelations/acceptRequest/',
   GETALLORDER: '/order',
+  CREATEORDER: '/order',
+  CREATEADDRESS: '/company/',
 };

@@ -172,6 +172,9 @@ export const Product = () => {
         visible={iscatemodal}
         onPress={() => setCatemodal(false)}
         data={filtercatelist}
+        heading={appConstant.selectcate}
+        nocategory={appConstant.nocatdata}
+        itemkey="categoryName"
       />
 
       <Importcate

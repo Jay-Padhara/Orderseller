@@ -13,6 +13,7 @@ export const Textinputs = ({
   max,
   value,
   multiline,
+  onBlur,
 }) => {
   return (
     <TextInput
@@ -24,6 +25,7 @@ export const Textinputs = ({
       multiline={multiline}
       style={style}
       maxLength={max}
+      onBlur={onBlur}
       onSubmitEditing={onSubmitEditing}
       returnKeyType={returnKeyType}
       keyboardType={keyboardType ? keyboardType : 'default'}

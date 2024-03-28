@@ -339,6 +339,9 @@ export const Addproduct = ({route}) => {
         data={filtercatelist}
         onChangeText={handleSearch}
         onselect={handleSelect}
+        heading={appConstant.selectcate}
+        nocategory={appConstant.nocatdata}
+        itemkey="categoryName"
       />
 
       <View style={styles.head}>

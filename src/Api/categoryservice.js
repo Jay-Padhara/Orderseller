@@ -37,7 +37,7 @@ export const getallcategory = async (dispatch, id) => {
     }
     return response;
   } catch (error) {
-    console.error(error);
+    console.log(error);
     dispatch(getallcatefailed(error));
     return error;
   }

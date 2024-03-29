@@ -1,5 +1,5 @@
 import {View, Text, TouchableOpacity, StyleSheet} from 'react-native';
-import React, {useCallback, useState} from 'react';
+import React, {useCallback, useEffect, useState} from 'react';
 import {SafeAreaView} from 'react-native-safe-area-context';
 import {colors} from '../../assets/colors';
 import {fonts} from '../../assets/fonts';
@@ -22,23 +22,39 @@ import {handleMessage} from '../../helper/utils';
 import {getallproducts} from '../../Api/productservice';
 import {Buyermodal} from '../../Components/Buyermodal';
 import {Statusmodal} from '../../Components/Statusmodal';
+import {Addressmodal} from '../../Components/Addressmodal';
+import {getalladdresses} from '../../Api/addressservice';
+import {createorders, updateorders} from '../../Api/orderservice';
+import {Loader} from '../../Components/Loader';
 
-export const Addorder = () => {
+export const Addorder = ({route}) => {
   const navigation = useNavigation();
   const dispatch = useDispatch();
 
   const userdetails = useSelector(state => state.login.login_data);
-  const compid = userdetails?.result?.id;
+  const compid = userdetails?.result?.company?.id;
 
   const [visible, setVisible] = useState(false);
   const [isbuyermodal, setBuyermodal] = useState(false);
   const [isproductmodal, setProductmodal] = useState(false);
   const [isstatusmodal, setStatusmodal] = useState(false);
+  const [isdeliverymodal, setDeliverymodal] = useState(false);
+  const [isbillingmodal, setBillingmodal] = useState(false);
+  const [isloading, setLoading] = useState(false);
 
   const [buyerlist, setBuyerlist] = useState([]);
   const [filterbuyerlist, setFilterbuyerlist] = useState([]);
   const [productlist, setProductlist] = useState([]);
   const [filterproductlist, setFilterproductlist] = useState([]);
+  const [addresslist, setAddresslist] = useState([]);
+
+  const [buyerid, setBuyerid] = useState();
+  const [productid, setProductid] = useState();
+  const [daddid, setDaddid] = useState();
+  const [baddid, setBaddid] = useState();
+
+  const [data, setData] = useState();
+  const [from, setFrom] = useState();
 
   const [pagevalue, setPagevalue] = useState(0);
   const [quantity, setQuantity] = useState(0);
@@ -60,6 +76,72 @@ export const Addorder = () => {
   const [errdeliveryadd, setErrdeliveryadd] = useState(false);
   const [errbillingadd, setErrbillingadd] = useState(false);
   const [errstatus, setErrstatus] = useState(false);
+
+  const handleData = useCallback(async () => {
+    setBuyercomp(data?.createdByCompany?.companyName);
+    setProductname(data?.orderDetails[0]?.product?.productName);
+    setQuantity(data?.totalQuantity);
+    setNotes(data?.notes);
+    setProductprice(data?.orderDetails[0]?.price);
+    setSelecteddate(data?.approxDeliveryDate);
+    setDeliveryadd(
+      data?.deliveryAddress?.addressName +
+        ' ' +
+        data?.deliveryAddress?.addressLine +
+        ' ' +
+        data?.deliveryAddress?.locality +
+        ', ' +
+        data?.deliveryAddress?.city +
+        ', ' +
+        data?.deliveryAddress?.state +
+        '-' +
+        data?.deliveryAddress?.pincode +
+        '.',
+    );
+    setBillingadd(
+      data?.billingAddress?.addressName +
+        ' ' +
+        data?.billingAddress?.addressLine +
+        ' ' +
+        data?.billingAddress?.locality +
+        ', ' +
+        data?.billingAddress?.city +
+        ', ' +
+        data?.billingAddress?.state +
+        '-' +
+        data?.billingAddress?.pincode +
+        '.',
+    );
+    setDaddid(data?.deliveryAddress?.id);
+    setBaddid(data?.billingAddress?.id);
+    setStatus(data?.status);
+    setProductid(data?.orderDetails[0]?.product?.id);
+    setBuyerid(data?.createdByCompany?.id);
+  }, [data]);
+
+  useEffect(() => {
+    if (route?.params?.data) {
+      console.log(route?.params?.data);
+      setData(route?.params?.data);
+      setFrom(route?.params?.from);
+      handleData();
+    } else {
+      setData(null);
+      setFrom(null);
+    }
+  }, [route?.params, handleData]);
+
+  const handleEmpty = () => {
+    setBuyercomp('');
+    setProductname('');
+    setQuantity(0);
+    setPagevalue(0);
+    setNotes('');
+    setSelecteddate('');
+    setDeliveryadd('');
+    setBillingadd('');
+    setStatus('');
+  };
 
   const handleError1 = async () => {
     let errorstatus = false;
@@ -126,7 +208,7 @@ export const Addorder = () => {
         handleMessage(appConstant.error, response?.message, appConstant.danger);
       }
     } catch (error) {
-      console.error(error);
+      console.log(error);
     }
   }, [dispatch]);
 
@@ -159,6 +241,28 @@ export const Addorder = () => {
     }, [getAllProduct]),
   );
 
+  //GETALL ADDRESS
+  const handleAddress = useCallback(async () => {
+    try {
+      const response = await getalladdresses(dispatch, compid);
+      console.log(response, 'getall address');
+
+      if (!response?.error) {
+        setAddresslist(response?.result);
+      } else {
+        handleMessage(appConstant.error, response?.message, appConstant.danger);
+      }
+    } catch (error) {
+      console.log(error);
+    }
+  }, [dispatch, compid]);
+
+  useFocusEffect(
+    useCallback(() => {
+      handleAddress();
+    }, [handleAddress]),
+  );
+
   const handleBuyersearch = text => {
     if (!text) {
       setFilterbuyerlist(buyerlist);
@@ -186,12 +290,15 @@ export const Addorder = () => {
   };
 
   const handlebuyer = async text => {
+    console.log(text?.createdByCompany?.id);
+    setBuyerid(text?.createdByCompany?.id);
     setBuyercomp(text?.createdByCompany?.companyName);
     setErrbuyer(false);
     setBuyermodal(false);
   };
 
   const handleProduct = async text => {
+    setProductid(text?.id);
     setProductname(text?.productName);
     setProductprice(text?.price);
     setErrproduct(false);
@@ -199,10 +306,51 @@ export const Addorder = () => {
   };
 
   const handleStatus = async text => {
-    console.log(text);
     setStatus(text);
     setErrstatus(false);
     setStatusmodal(false);
+  };
+
+  const handleDaddress = async text => {
+    console.log(text?.id);
+    setDaddid(text?.id);
+    const delivery =
+      text?.addressName +
+      ' ' +
+      text?.addressLine +
+      ' ' +
+      text?.locality +
+      ', ' +
+      text?.city +
+      ', ' +
+      text?.state +
+      '-' +
+      text?.pincode +
+      '.';
+    setDeliveryadd(delivery);
+    setErrdeliveryadd(false);
+    setDeliverymodal(false);
+  };
+
+  const handleBaddress = async text => {
+    console.log(text?.id);
+    setBaddid(text?.id);
+    const billing =
+      text?.addressName +
+      ' ' +
+      text?.addressLine +
+      ' ' +
+      text?.locality +
+      ', ' +
+      text?.city +
+      ', ' +
+      text?.state +
+      '-' +
+      text?.pincode +
+      '.';
+    setBillingadd(billing);
+    setErrbillingadd(false);
+    setBillingmodal(false);
   };
 
   const handleNext = async () => {
@@ -220,11 +368,103 @@ export const Addorder = () => {
         console.log('go to last page...');
         setPagevalue(2);
       }
+    } else {
+      //UPDATE OREDRS
+      if (from) {
+        try {
+          setLoading(true);
+
+          const id = data?.id;
+
+          const dataitem = {
+            company: compid,
+            orderDetails: [
+              {
+                product: productid,
+                quantity: quantity,
+              },
+            ],
+            deliveryAddress: daddid,
+            billingAddress: baddid,
+            approxDeliveryDate: selecteddate,
+            createdByCompany: buyerid,
+          };
+
+          console.log(dataitem);
+
+          const response = await updateorders(dispatch, id, dataitem);
+          console.log(response, 'update order response');
+
+          if (!response?.error) {
+            handleMessage(
+              appConstant.Success,
+              response?.message,
+              appConstant.success,
+            );
+            handleEmpty();
+            navigation.navigate(appConstant.orders);
+          } else {
+            handleMessage(
+              appConstant.error,
+              response?.message,
+              appConstant.danger,
+            );
+          }
+          setLoading(false);
+        } catch (error) {
+          console.log(error);
+        }
+      } else {
+        //CREATE ORDERS
+        try {
+          setLoading(true);
+
+          const dataitem = {
+            company: compid,
+            orderDetails: [
+              {
+                product: productid,
+                quantity: quantity,
+              },
+            ],
+            deliveryAddress: daddid,
+            billingAddress: baddid,
+            approxDeliveryDate: selecteddate,
+            createdByCompany: buyerid,
+          };
+
+          console.log(dataitem);
+
+          const response = await createorders(dispatch, dataitem);
+          console.log(response, 'create order response');
+
+          if (!response?.error) {
+            handleMessage(
+              appConstant.Success,
+              response?.message,
+              appConstant.success,
+            );
+            handleEmpty();
+            navigation.navigate(appConstant.orders);
+          } else {
+            handleMessage(
+              appConstant.error,
+              response?.message,
+              appConstant.danger,
+            );
+          }
+          setLoading(false);
+        } catch (error) {
+          console.log(error);
+        }
+      }
     }
   };
 
   return (
     <SafeAreaView style={styles.container}>
+      <Loader visible={isloading} />
+
       <Buyermodal
         visible={isbuyermodal}
         onPress={() => setBuyermodal(false)}
@@ -252,6 +492,21 @@ export const Addorder = () => {
         onselect={handleStatus}
       />
 
+      <Addressmodal
+        data={addresslist}
+        visible={isdeliverymodal}
+        onPress={() => setDeliverymodal(false)}
+        onselect={handleDaddress}
+      />
+
+      <Addressmodal
+        type={true}
+        data={addresslist}
+        visible={isbillingmodal}
+        onPress={() => setBillingmodal(false)}
+        onselect={handleBaddress}
+      />
+
       <View style={styles.head}>
         {pagevalue === 0 ? (
           <TouchableOpacity
@@ -261,7 +516,9 @@ export const Addorder = () => {
           </TouchableOpacity>
         ) : null}
 
-        <Text style={styles.text}>{appConstant.addorder}</Text>
+        <Text style={styles.text}>
+          {from ? appConstant.editorder : appConstant.addorder}
+        </Text>
       </View>
 
       {/* SCREEN 0*/}
@@ -325,7 +582,6 @@ export const Addorder = () => {
                   onPress={() => {
                     setQuantity(prevQuantity => {
                       const updateqty = prevQuantity + 1;
-                      console.log(updateqty, 'COUNT... ');
                       updateqty > 0
                         ? setErrquantity(false)
                         : setErrquantity(true);
@@ -345,6 +601,17 @@ export const Addorder = () => {
               ) : null}
             </View>
           </View>
+
+          {from ? (
+            <View style={styles.editrice}>
+              <Text style={styles.pr}>{appConstant.price}</Text>
+              <Text style={styles.qty}>
+                ₹{productprice}.00 x {quantity} {appConstant.qty}
+              </Text>
+              <Text style={styles.pr1}>=</Text>
+              <Text style={styles.pr2}>₹{productprice * quantity}.00</Text>
+            </View>
+          ) : null}
 
           <Button
             style={styles.touchsignin}
@@ -385,7 +652,7 @@ export const Addorder = () => {
           <View style={styles.bcompany}>
             <Text style={styles.btext}>{appConstant.notes}</Text>
             <Textinputs
-              placeholder={appConstant.enternotes}
+              placeholder={from ? (notes ? notes : '-') : appConstant.notes}
               color={colors.labelgrey}
               style={styles.textin}
               value={notes}
@@ -443,15 +710,24 @@ export const Addorder = () => {
             {/* DELIVERY ADDRESS */}
             <Text style={styles.btext}>{appConstant.deliveryadd}</Text>
             <View style={styles.svgbox}>
-              <TouchableOpacity style={styles.passtextin}>
-                <Text style={styles.date}>{appConstant.deliveryadd}</Text>
+              <TouchableOpacity
+                style={styles.passtextin}
+                onPress={() => setDeliverymodal(true)}>
+                <Text style={styles.date1}>
+                  {deliveryadd ? deliveryadd : appConstant.deliveryadd}
+                </Text>
               </TouchableOpacity>
-              <View style={styles.arrow}>
+              <TouchableOpacity
+                style={styles.arrow}
+                onPress={() => setDeliverymodal(true)}>
                 <SvgIcon.down_arrow width={rw(7)} height={rh(6)} />
-              </View>
+              </TouchableOpacity>
 
               <TouchableOpacity
-                style={styles.plus}
+                style={[
+                  styles.plus,
+                  deliveryadd ? {paddingVertical: rh(1.6)} : null,
+                ]}
                 onPress={() => navigation.navigate(appConstant.createadd)}>
                 <SvgIcon.whiteplus width={rw(7)} height={rh(6)} />
               </TouchableOpacity>
@@ -463,15 +739,24 @@ export const Addorder = () => {
             {/* BILLING ADDRESS */}
             <Text style={styles.btext}>{appConstant.billingadd}</Text>
             <View style={styles.svgbox}>
-              <TouchableOpacity style={styles.passtextin}>
-                <Text style={styles.date}>{appConstant.billingadd}</Text>
+              <TouchableOpacity
+                style={styles.passtextin}
+                onPress={() => setBillingmodal(true)}>
+                <Text style={styles.date1}>
+                  {billingadd ? billingadd : appConstant.billingadd}
+                </Text>
               </TouchableOpacity>
-              <TouchableOpacity style={styles.arrow}>
+              <TouchableOpacity
+                style={styles.arrow}
+                onPress={() => setBillingmodal(true)}>
                 <SvgIcon.down_arrow width={rw(7)} height={rh(6)} />
               </TouchableOpacity>
 
               <TouchableOpacity
-                style={styles.plus}
+                style={[
+                  styles.plus,
+                  billingadd ? {paddingVertical: rh(1.6)} : null,
+                ]}
                 onPress={() => navigation.navigate(appConstant.createadd)}>
                 <SvgIcon.whiteplus width={rw(7)} height={rh(6)} />
               </TouchableOpacity>
@@ -519,7 +804,7 @@ export const Addorder = () => {
           <Text style={styles.confirm}>{appConstant.orderconfirm}</Text>
           <Text style={styles.buyer}>
             {appConstant.buyercompname}
-            <Text style={styles.confirmtxt}> jay padhara</Text>
+            <Text style={styles.confirmtxt}>{buyercomp}</Text>
           </Text>
 
           <Line />
@@ -528,15 +813,17 @@ export const Addorder = () => {
             <Text style={styles.proname}>1.</Text>
             <Text style={styles.pro}>
               {appConstant.productName}
-              <Text style={styles.confirmtxt}> item 10</Text>
+              <Text style={styles.confirmtxt}>{productname}</Text>
             </Text>
           </View>
 
           <View style={styles.proprice}>
             <Text style={styles.pr}>{appConstant.price}</Text>
-            <Text style={styles.qty}>₹8.00 x 2 {appConstant.qty}</Text>
+            <Text style={styles.qty}>
+              ₹{productprice}.00 x {quantity} {appConstant.qty}
+            </Text>
             <Text style={styles.pr1}>=</Text>
-            <Text style={styles.pr1}> ₹16.00</Text>
+            <Text style={styles.pr2}>₹{productprice * quantity}.00</Text>
           </View>
 
           <Line />
@@ -550,46 +837,42 @@ export const Addorder = () => {
 
           <Text style={styles.proname}>
             {appConstant.approxdate}
-            <Text style={styles.confirmtxt}>27-01-2002</Text>
+            <Text style={styles.confirmtxt}>{selecteddate}</Text>
           </Text>
 
           <Line />
 
           <View style={styles.product}>
             <Text style={styles.proname}>{appConstant.deliveryadd + ':'} </Text>
-            <Text style={styles.deliadd}>
-              Lorem Ipsum is simply dummy text of the printing and.
-            </Text>
+            <Text style={styles.deliadd}>{deliveryadd}</Text>
           </View>
 
           <Line />
 
           <View style={styles.product}>
             <Text style={styles.proname}>{appConstant.billingadd + ':'} </Text>
-            <Text style={styles.deliadd}>
-              Lorem Ipsum is simply dummy text of the printing and.
-            </Text>
+            <Text style={styles.deliadd}>{billingadd}</Text>
           </View>
 
           <Line />
 
           <Text style={styles.proname}>
             {appConstant.shipping}
-            <Text style={styles.confirmtxt}>0</Text>
+            <Text style={styles.confirmtxt}>{appConstant.zero}</Text>
           </Text>
 
           <Line />
 
           <Text style={styles.proname}>
             {appConstant.orderstatus + ': '}
-            <Text style={styles.confirmtxt}>Pending</Text>
+            <Text style={styles.confirmtxt}>{status}</Text>
           </Text>
 
           <Line />
 
           <Text style={styles.totalam}>
             {appConstant.total}
-            <Text style={styles.totaltxt}>₹16.00</Text>
+            <Text style={styles.totaltxt}>₹{quantity * productprice}.00</Text>
           </Text>
         </KeyboardAwareScrollView>
       )}
@@ -734,7 +1017,7 @@ const styles = StyleSheet.create({
   },
 
   deliadd: {
-    width: rw(56),
+    width: rw(57.5),
     marginLeft: rw(0.2),
     color: colors.labelgrey,
     fontFamily: fonts.medium,
@@ -745,6 +1028,7 @@ const styles = StyleSheet.create({
     textAlign: 'right',
     color: colors.red,
     fontSize: rf(1.6),
+    marginTop: rh(1),
     marginRight: rw(5),
     fontFamily: fonts.medium,
   },
@@ -754,13 +1038,14 @@ const styles = StyleSheet.create({
     right: rw(33),
     color: colors.red,
     fontSize: rf(1.6),
+    margin: rw(1),
     marginRight: rw(5),
     fontFamily: fonts.medium,
   },
 
   errqty: {
-    position: 'absolute',
-    right: rw(5.5),
+    marginLeft: rw(70),
+    margin: rw(1),
     color: colors.red,
     fontSize: rf(1.6),
     fontFamily: fonts.medium,
@@ -860,7 +1145,7 @@ const styles = StyleSheet.create({
   },
 
   total: {
-    marginTop: rh(26),
+    marginTop: rh(23),
     backgroundColor: colors.primary,
     padding: rh(1.6),
   },
@@ -916,6 +1201,7 @@ const styles = StyleSheet.create({
     backgroundColor: colors.grey,
     borderRadius: 13,
     padding: rh(1.8),
+    color: colors.labelgrey,
     fontSize: rf(2),
     fontFamily: fonts.medium,
   },
@@ -936,8 +1222,18 @@ const styles = StyleSheet.create({
   },
 
   date: {
+    width: rw(66),
     padding: rh(0.3),
     fontSize: rf(2),
+    color: colors.labelgrey,
+    fontFamily: fonts.medium,
+  },
+
+  date1: {
+    color: colors.labelgrey,
+    width: rw(67),
+    padding: rh(0.3),
+    fontSize: rf(1.9),
     fontFamily: fonts.medium,
   },
 
@@ -1000,6 +1296,12 @@ const styles = StyleSheet.create({
     margin: rw(1),
   },
 
+  editrice: {
+    flexDirection: 'row',
+    marginLeft: rw(7),
+    marginTop: rw(3),
+  },
+
   pr: {
     color: colors.black,
     fontSize: rf(1.8),
@@ -1013,7 +1315,16 @@ const styles = StyleSheet.create({
     fontFamily: fonts.semibold,
   },
 
+  pr2: {
+    width: rw(16),
+    marginLeft: rw(8),
+    color: colors.black,
+    fontSize: rf(1.7),
+    fontFamily: fonts.semibold,
+  },
+
   qty: {
+    width: rw(30),
     marginLeft: rw(4),
     color: colors.black,
     fontSize: rf(1.7),

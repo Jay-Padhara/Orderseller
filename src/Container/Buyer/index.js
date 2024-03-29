@@ -58,7 +58,7 @@ export const Buyer = () => {
       }
       setLoading(false);
     } catch (error) {
-      console.error(error);
+      console.log(error);
     } finally {
       setLoading(false);
     }
@@ -106,7 +106,7 @@ export const Buyer = () => {
       }
       setLoading(false);
     } catch (error) {
-      console.error(error);
+      console.log(error);
     } finally {
       setLoading(false);
     }
@@ -139,7 +139,7 @@ export const Buyer = () => {
       }
       setLoading(false);
     } catch (error) {
-      console.error(error);
+      console.log(error);
     } finally {
       setLoading(false);
     }

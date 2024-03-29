@@ -28,7 +28,7 @@ export const Addproduct = ({route}) => {
   const dispatch = useDispatch();
 
   const userdetails = useSelector(state => state.login.login_data);
-  const compid = userdetails?.result?.id;
+  const compid = userdetails?.result?.company?.id;
 
   const [logo, setLogo] = useState();
   const [visible, setVisible] = useState(false);

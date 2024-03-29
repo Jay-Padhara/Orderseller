@@ -14,6 +14,14 @@ export const Line = () => {
   );
 };
 
+export const Line1 = () => {
+  return (
+    <View style={styles.line}>
+      <SvgIcon.line width={rw(83)} height={rh(2)} />
+    </View>
+  );
+};
+
 const styles = StyleSheet.create({
   line: {
     alignItems: 'center',

@@ -17,14 +17,14 @@ let axiosinstance = axios.create({
 
 console.log('base URL......', host);
 
-axiosinstance.defaults.headers.common['Platform-Type'] = 'mobile';
+axiosinstance.defaults.headers.common['Platform-Type'] = 'web';
 
 async function network() {
   try {
     const state = await NetInfo.fetch();
     return state.isConnected;
   } catch (error) {
-    console.error('Error fetching network state:', error);
+    console.log('Error fetching network state:', error);
     return false;
   }
 }

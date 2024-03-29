@@ -21,6 +21,13 @@ import {
   resendemailfailed,
   resendemailsuccess,
 } from '../Redux/Reducers/Authentication/resendreducer';
+
+import {
+  changepassword,
+  changepasswordfailed,
+  changepasswordsuccess,
+} from '../Redux/Reducers/Authentication/changepasswordreducer';
+
 import {URLS} from './apiConstants';
 import Api from './index';
 
@@ -92,6 +99,24 @@ export const resendmail = async (dispatch, data) => {
     return response;
   } catch (error) {
     dispatch(resendemailfailed(error));
+    return error;
+  }
+};
+
+export const changepasswords = async (dispatch, data) => {
+  try {
+    dispatch(changepassword());
+    const response = await Api.post(URLS.CHANGEPASSWORD, data);
+    console.log(response);
+
+    if (response?.error) {
+      dispatch(changepasswordsuccess(response?.message));
+    } else {
+      dispatch(changepasswordfailed(response));
+    }
+    return response;
+  } catch (error) {
+    dispatch(changepasswordfailed(error));
     return error;
   }
 };

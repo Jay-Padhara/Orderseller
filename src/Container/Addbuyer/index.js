@@ -74,7 +74,6 @@ export const Addbuyer = ({route}) => {
   const localityref = useRef(null);
   const pincoderef = useRef(null);
   const cityref = useRef(null);
-  const scrollref = useRef(null);
 
   const handleData = useCallback(async () => {
     data?.createdByCompany?.gstNo ? value === 0 : value === 1;
@@ -346,7 +345,6 @@ export const Addbuyer = ({route}) => {
       </View>
 
       <KeyboardAwareScrollView
-        ref={scrollref}
         bounces
         alwaysBounceVertical={false}
         showsVerticalScrollIndicator={false}
@@ -387,12 +385,12 @@ export const Addbuyer = ({route}) => {
                 refe={gstref}
                 value={gstno}
                 onChangeText={text => {
+                  setGstno(text.toUpperCase());
                   !text
                     ? setErrGstno(false)
                     : !reggst.test(text)
                     ? setErrGstno(true)
                     : setErrGstno(false);
-                  setGstno(text.toUpperCase());
                 }}
                 color={colors.black}
                 style={styles.textin}

@@ -22,7 +22,8 @@ import {Customview} from '../../Components/Button';
 import {Loader} from '../../Components/Loader';
 import {useDispatch} from 'react-redux';
 import {handleMessage} from '../../helper/utils';
-import {getallorders} from '../../Api/orderservice';
+import {getallorders, updateorderstatus} from '../../Api/orderservice';
+import {Popupmenu} from '../../Components/Popupmenu';
 
 export const Orders = () => {
   const navigation = useNavigation();
@@ -32,6 +33,9 @@ export const Orders = () => {
   const [orderdata, setOrderdata] = useState([]);
   const [filterorderdata, setFilterorderdata] = useState([]);
 
+  const [selectedorder, setSelectedorder] = useState();
+  const [selectedorderstatus, setSelectedorderstatus] = useState();
+
   const handleCompany = useCallback(async () => {
     try {
       setLoading(true);
@@ -40,7 +44,6 @@ export const Orders = () => {
       console.log(response, 'getall orders');
 
       if (!response?.error) {
-        console.log(response?.result);
         setOrderdata(response?.result?.data);
         setFilterorderdata(response?.result?.data);
       } else {
@@ -48,7 +51,7 @@ export const Orders = () => {
       }
       setLoading(false);
     } catch (error) {
-      console.error(error);
+      console.log(error);
     } finally {
       setLoading(false);
     }
@@ -59,6 +62,49 @@ export const Orders = () => {
       handleCompany();
     }, [handleCompany]),
   );
+
+  const handleSearch = async text => {
+    console.log(text);
+    if (!text) {
+      setFilterorderdata(orderdata);
+    } else {
+      const filterlist = orderdata.filter(O => {
+        return O?.createdByCompany?.companyName
+          .toUpperCase()
+          .includes(text?.toUpperCase());
+      });
+      filterlist.sort();
+      setFilterorderdata(filterlist);
+    }
+  };
+
+  const handleChangestatus = async (id, orderstatus) => {
+    try {
+      setLoading(true);
+      setSelectedorderstatus('');
+
+      const data = {
+        status: orderstatus,
+      };
+
+      const response = await updateorderstatus(dispatch, id, data);
+      console.log(response, 'status response');
+
+      if (!response?.error) {
+        handleMessage(
+          appConstant.Success,
+          response?.message,
+          appConstant.success,
+        );
+        handleCompany();
+      } else {
+        handleMessage(appConstant.error, response?.message, appConstant.danger);
+      }
+      setLoading(false);
+    } catch (error) {
+      console.log(error);
+    }
+  };
 
   return (
     <SafeAreaView style={styles.container}>
@@ -86,6 +132,7 @@ export const Orders = () => {
           style={styles.svgbox}
           placeholder={appConstant.searchhere}
           placeholderTextColor={colors.labelgrey}
+          onChangeText={text => handleSearch(text)}
         />
         <TouchableOpacity style={styles.filter}>
           <SvgIcon.filter width={rw(7)} height={rh(7)} />
@@ -108,7 +155,7 @@ export const Orders = () => {
                 <Customview
                   style={styles.orderno}
                   head={appConstant.orderno}
-                  text="#8346"
+                  text={item?.orderId}
                   headstyle={styles.htext}
                   textstyle={styles.ttext}
                 />
@@ -116,21 +163,44 @@ export const Orders = () => {
                 <Customview
                   style={styles.comp}
                   head={appConstant.Compname}
-                  text="Jay padhara"
+                  text={item?.createdByCompany?.companyName}
                   headstyle={styles.htext}
                   textstyle={styles.ttext}
                 />
 
-                <TouchableOpacity style={styles.dot}>
+                <TouchableOpacity
+                  style={styles.dot}
+                  onPress={() => {
+                    console.log(item?.orderDetails[0]?.id);
+                    setSelectedorder(item?.id);
+                  }}>
                   <SvgIcon.dot width={rw(3)} height={rh(2)} />
                 </TouchableOpacity>
               </View>
+
+              {/* POPUP-MENU */}
+              <Popupmenu
+                opened={selectedorder !== null && selectedorder === item?.id}
+                order={true}
+                setPopup={() => setSelectedorder()}
+                onEdit={() => {
+                  navigation.navigate(appConstant.addOrder, {
+                    data: item,
+                    from: true,
+                  });
+                  setSelectedorder('');
+                }}
+                onView={() => {
+                  navigation.navigate(appConstant.vieworder, {data: item});
+                  setSelectedorder('');
+                }}
+              />
 
               <View style={styles.areaview1}>
                 <Customview
                   style={styles.orderno}
                   head={appConstant.orderdate}
-                  text="02-01-2012"
+                  text={item?.createdAt.slice(0, 10)}
                   headstyle={styles.htext}
                   textstyle={styles.ttext}
                 />
@@ -138,7 +208,7 @@ export const Orders = () => {
                 <Customview
                   style={styles.comp}
                   head={appConstant.approxdate}
-                  text="02-01-2012"
+                  text={item?.approxDeliveryDate}
                   headstyle={styles.htext}
                   textstyle={styles.ttext}
                 />
@@ -146,7 +216,7 @@ export const Orders = () => {
                 <Customview
                   style={styles.date}
                   head={appConstant.ddate}
-                  text="-"
+                  text={item?.deliveryAt ? item.deliveryAt.slice(0, 10) : '-'}
                   headstyle={styles.htext}
                   textstyle={styles.ttext}
                 />
@@ -156,7 +226,7 @@ export const Orders = () => {
                 <Customview
                   style={styles.orderno}
                   head={appConstant.items}
-                  text="08"
+                  text={item?.totalQuantity}
                   headstyle={styles.htext}
                   textstyle={styles.ttext}
                 />
@@ -164,18 +234,59 @@ export const Orders = () => {
                 <Customview
                   style={styles.comp}
                   head={appConstant.Totalamount}
-                  text="₹200"
+                  text={'₹' + item?.totalAmount}
                   headstyle={styles.htext}
                   textstyle={styles.ttext}
                 />
 
-                <Customview
-                  style={styles.date}
-                  head={appConstant.status}
-                  text="-"
-                  headstyle={styles.htext}
-                  textstyle={styles.ttext}
-                />
+                <View style={styles.statuss}>
+                  <Text style={styles.htext}>{appConstant.status}</Text>
+                  <View style={styles.iconstatus}>
+                    <View
+                      style={[
+                        styles.statustype,
+                        item?.status === 'pending'
+                          ? {backgroundColor: colors.green}
+                          : item?.status === 'partialDelivered'
+                          ? {backgroundColor: colors.skyblue}
+                          : item?.status === 'delivered'
+                          ? {backgroundColor: colors.primary}
+                          : {backgroundColor: colors.red},
+                      ]}>
+                      <Text style={styles.stext}>{item?.status}</Text>
+                    </View>
+
+                    {item?.status === 'pending' ||
+                    item?.status === 'partialDelivered' ? (
+                      <TouchableOpacity
+                        style={styles.icon}
+                        onPress={() => {
+                          setSelectedorderstatus(item?.id);
+                        }}>
+                        <SvgIcon.popedit width={rw(5)} height={rh(2)} />
+                      </TouchableOpacity>
+                    ) : null}
+
+                    {/* POPUP-MENU */}
+                    <Popupmenu
+                      opened={
+                        selectedorderstatus !== null &&
+                        selectedorderstatus === item?.id
+                      }
+                      setPopup={() => setSelectedorderstatus('')}
+                      orderstatus={true}
+                      status1={item?.status}
+                      onpending={() => handleChangestatus(item?.id, 'pending')}
+                      onPartial={() =>
+                        handleChangestatus(item?.id, 'partialDelivered')
+                      }
+                      onDeliver={() =>
+                        handleChangestatus(item?.id, 'delivered')
+                      }
+                      onCancel={() => handleChangestatus(item?.id, 'cancelled')}
+                    />
+                  </View>
+                </View>
               </View>
             </View>
           );
@@ -302,7 +413,7 @@ const styles = StyleSheet.create({
   filter: {
     alignItems: 'center',
     justifyContent: 'center',
-    width: rw(13.5),
+    width: rw(12.5),
     height: rh(6.5),
     backgroundColor: colors.primary,
     marginLeft: rw(5.4),
@@ -354,8 +465,35 @@ const styles = StyleSheet.create({
     fontSize: rf(1.6),
   },
 
+  stext: {
+    fontFamily: fonts.semibold,
+    color: colors.white,
+    fontSize: rf(1.1),
+  },
+
   dot: {
     position: 'absolute',
     right: rw(3),
+  },
+
+  statuss: {
+    marginLeft: rw(1),
+  },
+
+  statustype: {
+    padding: rw(0.5),
+    alignItems: 'center',
+    justifyContent: 'center',
+    borderRadius: 6,
+  },
+
+  iconstatus: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+
+  icon: {
+    marginLeft: rw(0.1),
   },
 });

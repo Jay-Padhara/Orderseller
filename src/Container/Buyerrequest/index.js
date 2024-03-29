@@ -51,7 +51,7 @@ export const Buyerrequest = () => {
       }
       setLoading(false);
     } catch (error) {
-      console.error(error);
+      console.log(error);
     }
   }, [dispatch]);
 
@@ -86,7 +86,7 @@ export const Buyerrequest = () => {
 
       setLoading(false);
     } catch (error) {
-      console.error(error);
+      console.log(error);
     }
   };
 
@@ -116,7 +116,7 @@ export const Buyerrequest = () => {
 
       setLoading(false);
     } catch (error) {
-      console.error(error);
+      console.log(error);
     }
   };
 

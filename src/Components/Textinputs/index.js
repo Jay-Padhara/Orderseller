@@ -14,6 +14,7 @@ export const Textinputs = ({
   value,
   multiline,
   onBlur,
+  secureTextEntry,
 }) => {
   return (
     <TextInput
@@ -25,6 +26,7 @@ export const Textinputs = ({
       multiline={multiline}
       style={style}
       maxLength={max}
+      secureTextEntry={secureTextEntry}
       onBlur={onBlur}
       onSubmitEditing={onSubmitEditing}
       returnKeyType={returnKeyType}

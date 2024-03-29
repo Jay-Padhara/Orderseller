@@ -21,6 +21,9 @@ import buyerrequestreducer from '../Reducers/Buyer/buyerrequestreducer';
 import acceptrejectreducer from '../Reducers/Buyer/acceptrejectreducer';
 import getallorderreducer from '../Reducers/Orders/getallorderreducer';
 import createorderreducer from '../Reducers/Orders/createorderreducer';
+import getalladdressreducer from '../Reducers/Address/getalladdressreducer';
+import createaddressreducer from '../Reducers/Address/createaddressreducer';
+import updatestatus from '../Reducers/Orders/orderstatusreducer';
 
 export const store = configureStore({
   reducer: {
@@ -46,5 +49,8 @@ export const store = configureStore({
     acceptreject: acceptrejectreducer,
     getallorder: getallorderreducer,
     createorder: createorderreducer,
+    getalladdress: getalladdressreducer,
+    createaddress: createaddressreducer,
+    updatestatus: updatestatus,
   },
 });

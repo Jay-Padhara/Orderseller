@@ -36,7 +36,7 @@ export const Product = () => {
   const dispatch = useDispatch();
 
   const userdetails = useSelector(state => state.login.login_data);
-  const compid = userdetails?.result?.id;
+  const compid = userdetails?.result?.company?.id;
 
   const [product, setProduct] = useState([]);
   const [filteredproduct, setFilteredproduct] = useState([]);
@@ -465,7 +465,7 @@ const styles = StyleSheet.create({
   filter: {
     alignItems: 'center',
     justifyContent: 'center',
-    width: rw(13.5),
+    width: rw(12.5),
     height: rh(6.5),
     backgroundColor: colors.primary,
     marginLeft: rw(5.4),

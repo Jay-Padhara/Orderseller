@@ -25,7 +25,7 @@ export const Createaddress = () => {
   const dispatch = useDispatch();
 
   const userdetails = useSelector(state => state.login.login_data);
-  const compid = userdetails?.result?.id;
+  const compid = userdetails?.result?.company?.id;
 
   const [visible, setVisible] = useState(false);
   const [isshow, setShow] = useState(false);
@@ -131,8 +131,6 @@ export const Createaddress = () => {
           city: city,
           state: state,
         };
-
-        console.log(data);
 
         const response = await createaddresses(dispatch, compid, data);
         console.log(response, 'company response');

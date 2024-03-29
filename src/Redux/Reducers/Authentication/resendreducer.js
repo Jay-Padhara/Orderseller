@@ -16,13 +16,12 @@ const resendreducer = createSlice({
     },
     resendemailfailed(state, action) {
       state.loading = false;
-      state.register_error = action.payload;
-      state.register_data = null;
+      state.resend_error = action.payload;
     },
     resendemailsuccess(state, action) {
       state.loading = false;
-      state.register_data = action.payload;
-      state.register_error = null;
+      state.resend_data = action.payload;
+      state.resend_error = null;
     },
   },
 });

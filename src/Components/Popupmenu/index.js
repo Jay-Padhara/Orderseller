@@ -25,14 +25,28 @@ export const Popupmenu = ({
   onView,
   onChangestatus,
   status,
+  orderstatus,
+  order,
+  status1,
+  onpending,
+  onPartial,
+  onDeliver,
+  onCancel,
 }) => {
   return (
     <Menu
       opened={opened}
       onBackdropPress={() => setPopup(false)}
-      style={styles.popup}>
+      style={
+        buyeroption
+          ? styles.popup1
+          : orderstatus
+          ? styles.popup3
+          : styles.popup2
+      }>
       <MenuTrigger />
-      <MenuOptions optionsContainerStyle={styles.menu}>
+      <MenuOptions
+        optionsContainerStyle={orderstatus ? styles.menu1 : styles.menu}>
         {buyeroption ? (
           <>
             <CustomMenu onSelect={onEdit} text={appConstant.edit}>
@@ -56,6 +70,54 @@ export const Popupmenu = ({
                 <SvgIcon.active width={rw(4.5)} height={rh(3.2)} />
               </CustomMenu>
             )}
+          </>
+        ) : order ? (
+          <>
+            <CustomMenu onSelect={onEdit} text={appConstant.edit}>
+              <SvgIcon.popedit width={rw(4.5)} height={rh(3.2)} />
+            </CustomMenu>
+
+            <CustomMenu onSelect={onView} text={appConstant.view}>
+              <SvgIcon.eye width={rw(4.5)} height={rh(3.2)} />
+            </CustomMenu>
+          </>
+        ) : orderstatus ? (
+          <>
+            <StatusMenu
+              onSelect={onpending}
+              text={appConstant.pending}
+              orderstatus={true}>
+              {status1 === 'pending' ? (
+                <SvgIcon.down_arrow width={rw(5.5)} height={rh(3)} />
+              ) : null}
+            </StatusMenu>
+
+            <StatusMenu
+              onSelect={onPartial}
+              text={appConstant.partialdelivered}
+              orderstatus={true}>
+              {status1 === 'partial delivered' ? (
+                <SvgIcon.down_arrow width={rw(5.5)} height={rh(3)} />
+              ) : null}
+            </StatusMenu>
+
+            <StatusMenu
+              onSelect={onDeliver}
+              text={appConstant.delivered}
+              orderstatus={true}>
+              {status1 === 'delivered' ? (
+                <SvgIcon.down_arrow width={rw(5.5)} height={rh(3)} />
+              ) : null}
+            </StatusMenu>
+
+            <StatusMenu
+              onSelect={onCancel}
+              text={appConstant.Cancel}
+              orderstatus={true}>
+              {status1 === 'cancelled' ? (
+                <SvgIcon.down_arrow width={rw(5.5)} height={rh(3)} />
+              ) : null}
+            </StatusMenu>
           </>
         ) : (
           <>
@@ -82,6 +144,15 @@ const CustomMenu = ({onSelect, children, text}) => (
   </MenuOption>
 );
 
+const StatusMenu = ({onSelect, children, text, orderstatus}) => (
+  <MenuOption onSelect={onSelect}>
+    <View style={styles.menuOption}>
+      <Text style={orderstatus ? styles.text1 : styles.text}>{text}</Text>
+      <View style={styles.icon}>{children}</View>
+    </View>
+  </MenuOption>
+);
+
 const styles = StyleSheet.create({
   container: {
     flex: 1,
@@ -89,10 +160,22 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
   },
 
-  popup: {
+  popup1: {
     position: 'absolute',
     right: rw(1),
-    top: rh(2),
+    top: rh(3.5),
+  },
+
+  popup2: {
+    position: 'absolute',
+    right: rw(6),
+    top: rh(5),
+  },
+
+  popup3: {
+    position: 'absolute',
+    right: rw(2),
+    top: rh(3),
   },
 
   menu: {
@@ -106,16 +189,38 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.8,
   },
 
+  menu1: {
+    borderRadius: 9,
+    padding: rw(0.5),
+    backgroundColor: colors.white,
+    elevation: 30,
+    shadowColor: colors.labelgrey,
+    shadowOffset: {width: 1, height: 4},
+    shadowOpacity: 0.8,
+  },
+
   menuOption: {
     flexDirection: 'row',
     borderRadius: 20,
-    marginLeft: rw(1.6),
+    marginLeft: rw(1),
   },
 
   text: {
-    fontSize: rf(2),
+    fontSize: rf(1.9),
     color: colors.black,
     fontFamily: fonts.semibold,
     marginLeft: rw(4),
+  },
+
+  text1: {
+    fontSize: rf(1.8),
+    color: colors.black,
+    fontFamily: fonts.semibold,
+    marginLeft: rw(2),
+  },
+
+  icon: {
+    position: 'absolute',
+    right: 0,
   },
 });

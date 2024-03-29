@@ -21,5 +21,9 @@ export const URLS = {
   REQUESTSTATUS: '/companyRelations/acceptRequest/',
   GETALLORDER: '/order',
   CREATEORDER: '/order',
+  UPDATEORDER: '/order/',
+  GETALLADDRESS: '/company/',
   CREATEADDRESS: '/company/',
+  UPDATESTATUS: '/order/',
+  CHANGEPASSWORD: '/auth/change-password',
 };

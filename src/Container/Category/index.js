@@ -36,7 +36,7 @@ export const Category = () => {
   const dispatch = useDispatch();
 
   const userdetails = useSelector(state => state.login.login_data);
-  const compid = userdetails?.result?.id;
+  const compid = userdetails?.result?.company?.id;
 
   const [visible, setvisisble] = useState(false);
   const [isdelmodal, setDelmodal] = useState(false);
@@ -69,7 +69,7 @@ export const Category = () => {
       }
       setLoading(false);
     } catch (error) {
-      console.error(error);
+      console.log(error);
     }
   }, [dispatch, compid]);
 

@@ -30,6 +30,7 @@ import {Delemodal} from '../../Components/Deletemodal.js';
 import {Importcate} from '../../Components/Importcatemodal/index.js';
 import {handleMessage} from '../../helper/utils.js';
 import {Loader} from '../../Components/Loader/index.js';
+import ImageCropPicker from 'react-native-image-crop-picker';
 
 export const Category = () => {
   const navigation = useNavigation();
@@ -43,6 +44,7 @@ export const Category = () => {
   const [isimportmodal, setImportmodal] = useState(false);
   const [isPublish, setPublish] = useState(false);
   const [isloading, setLoading] = useState(true);
+  const [logo, setLogo] = useState();
   const [isshow, setShow] = useState(false);
   const [catelist, setCatelist] = useState([]);
   const [filtercatedata, setFiltercatedata] = useState([]);
@@ -53,6 +55,28 @@ export const Category = () => {
 
   const coderef = useRef();
   const nameref = useRef();
+
+  const handleGallery = () => {
+    ImageCropPicker.openPicker({
+      width: 100,
+      height: 100,
+      cropping: true,
+      mediaType: 'photo',
+      mimeTypes: ['image/svg+xml'],
+    })
+      .then(image => {
+        const uri = image.path;
+        const file = {
+          uri: uri,
+          type: 'image/svg+xml',
+          name: 'image.svg',
+        };
+        setLogo(file);
+      })
+      .catch(error => {
+        console.log(error);
+      });
+  };
 
   const handleCategory = useCallback(async () => {
     try {
@@ -258,6 +282,7 @@ export const Category = () => {
         button={appConstant.selectsvg}
         text={appConstant.importcategory}
         downloadtext={appConstant.downloadcategory}
+        onSelect={handleGallery}
         onClose={() => setImportmodal(false)}
       />
 

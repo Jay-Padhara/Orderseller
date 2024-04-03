@@ -29,7 +29,7 @@ export const Routes = () => {
   const Stack = createNativeStackNavigator();
   const dispatch = useDispatch();
 
-  const [loading, setLoading] = useState(false);
+  const [loading, setLoading] = useState(true);
   const [screen, setScreen] = useState(appConstant.login);
 
   useEffect(() => {
@@ -38,7 +38,6 @@ export const Routes = () => {
 
   const handleUser = useCallback(async () => {
     try {
-      setLoading(true);
       const mailpass = await AsyncStorage.getItem('Data');
 
       if (mailpass) {

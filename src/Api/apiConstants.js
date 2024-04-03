@@ -2,6 +2,7 @@ export const URLS = {
   LOGIN: '/auth/login',
   REGISTER: '/auth/register',
   CREATECOMPANY: '/company',
+  UPDATECOMPANY: '/company/',
   FORGOTPASSWORD: '/auth/forgot-password',
   RESEND: '/auth/resend-verify-email',
   GETALLCATEGORY: '/categories?',
@@ -24,6 +25,8 @@ export const URLS = {
   UPDATEORDER: '/order/',
   GETALLADDRESS: '/company/',
   CREATEADDRESS: '/company/',
+  UPDATEADDRESS: '/company/',
+  GETCOMPANY: '/company/',
   UPDATESTATUS: '/order/',
   CHANGEPASSWORD: '/auth/change-password',
 };

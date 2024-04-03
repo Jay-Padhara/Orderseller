@@ -1,5 +1,5 @@
 import {View, Text, StyleSheet, TouchableOpacity} from 'react-native';
-import React, {useRef, useState} from 'react';
+import React, {useEffect, useRef, useState} from 'react';
 import {colors} from '../../assets/colors';
 import {fonts} from '../../assets/fonts';
 import {appConstant} from '../../helper/appconstants';
@@ -18,9 +18,9 @@ import {handleMessage, states} from '../../helper/utils';
 import {Button} from '../../Components/Button';
 import {Loader} from '../../Components/Loader';
 import {useDispatch, useSelector} from 'react-redux';
-import {createaddresses} from '../../Api/addressservice';
+import {createaddresses, updateaddresses} from '../../Api/addressservice';
 
-export const Createaddress = () => {
+export const Createaddress = ({route}) => {
   const navigation = useNavigation();
   const dispatch = useDispatch();
 
@@ -36,6 +36,9 @@ export const Createaddress = () => {
   const [pincode, setPincode] = useState();
   const [city, setCity] = useState();
   const [state, setState] = useState();
+
+  const [from, setFrom] = useState();
+  const [id, setId] = useState();
 
   const [filterdata, setFilterdata] = useState(states.sort());
   const statedata = states.sort();
@@ -61,6 +64,21 @@ export const Createaddress = () => {
     setCity('');
     setState('');
   };
+
+  useEffect(() => {
+    if (route?.params) {
+      const data = route?.params?.data;
+      console.log(data);
+      setFrom(route?.params?.from);
+      setId(data?.id);
+      setAddress(data?.address);
+      setAddline(data?.addline);
+      setLocality(data?.locality);
+      setPincode(data?.pincode);
+      setCity(data?.city);
+      setState(data?.state);
+    }
+  }, [route?.params]);
 
   const handleError = async () => {
     let errorstatus = false;
@@ -132,8 +150,12 @@ export const Createaddress = () => {
           state: state,
         };
 
-        const response = await createaddresses(dispatch, compid, data);
-        console.log(response, 'company response');
+        console.log(data, '...', id);
+
+        const response = from
+          ? await updateaddresses(dispatch, compid, data, id)
+          : await createaddresses(dispatch, compid, data);
+        console.log(response, 'address response');
 
         if (!response?.error) {
           handleMessage(
@@ -142,6 +164,7 @@ export const Createaddress = () => {
             appConstant.success,
           );
           handleEmpty();
+          navigation.navigate(from && appConstant.profile);
         } else {
           handleMessage(
             appConstant.error,
@@ -177,7 +200,9 @@ export const Createaddress = () => {
           <SvgIcon.arrowleft width={rh(3.5)} height={rh(3.5)} />
         </TouchableOpacity>
 
-        <Text style={styles.text}>{appConstant.createAdd}</Text>
+        <Text style={styles.text}>
+          {from ? appConstant.editadd : appConstant.createAdd}
+        </Text>
       </View>
 
       <KeyboardAwareScrollView

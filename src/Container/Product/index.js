@@ -21,7 +21,7 @@ import {appConstant} from '../../helper/appconstants';
 import {fonts} from '../../assets/fonts';
 import {deleteproduct, getallproducts} from '../../Api/productservice';
 import {useDispatch, useSelector} from 'react-redux';
-import {handleMessage} from '../../helper/utils';
+import {Images, handleMessage} from '../../helper/utils';
 import {Filtermodal} from '../../Components/Filtermodal';
 import {Importcate} from '../../Components/Importcatemodal';
 import {Popupmenu} from '../../Components/Popupmenu';
@@ -30,6 +30,7 @@ import {Customview} from '../../Components/Button/index.js';
 import {Categorymodal} from '../../Components/Categorymodal/index.js';
 import {getallcategory} from '../../Api/categoryservice.js';
 import {Loader} from '../../Components/Loader/index.js';
+import ImageCropPicker from 'react-native-image-crop-picker';
 
 export const Product = () => {
   const navigation = useNavigation();
@@ -46,12 +47,35 @@ export const Product = () => {
   const [iscatemodal, setCatemodal] = useState(false);
   const [ispopup, setPopup] = useState(false);
   const [isshow, setShow] = useState(false);
+  const [logo, setLogo] = useState();
 
   const [catelist, setCatelist] = useState([]);
   const [filtercatelist, setFiltercatelist] = useState([]);
 
   const [selectedpro, setSelectedpro] = useState('');
   const [delid, setDelid] = useState();
+
+  const handleGallery = () => {
+    ImageCropPicker.openPicker({
+      width: 100,
+      height: 100,
+      cropping: true,
+      mediaType: 'photo',
+      mimeTypes: ['image/svg+xml'],
+    })
+      .then(image => {
+        const uri = image.path;
+        const file = {
+          uri: uri,
+          type: 'image/svg+xml',
+          name: 'image.svg',
+        };
+        setLogo(file);
+      })
+      .catch(error => {
+        console.log(error);
+      });
+  };
 
   //GET ALL PRODUCTS
   const handleProduct = useCallback(async () => {
@@ -179,10 +203,11 @@ export const Product = () => {
 
       <Importcate
         visible={isshow}
-        onClose={() => setShow(false)}
-        text={appConstant.importproduct}
         button={appConstant.selectsvg}
-        downloadtext={appConstant.downloadproduct}
+        text={appConstant.importcategory}
+        downloadtext={appConstant.downloadcategory}
+        onSelect={handleGallery}
+        onClose={() => setShow(false)}
       />
 
       <Delemodal
@@ -237,10 +262,7 @@ export const Product = () => {
                 <View style={styles.proname}>
                   <Image
                     source={{
-                      uri:
-                        item?.image !== undefined && item?.image !== null
-                          ? item.image
-                          : 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTinGCfuvtIzNvb6AsRFE7LtRJrTEKDxVxe6g&usqp=CAU',
+                      uri: Images[0],
                     }}
                     style={styles.img}
                   />

@@ -58,7 +58,6 @@ export const Companydetails = () => {
   const [errpincode, setErrPincode] = useState(false);
   const [errcity, setErrCity] = useState(false);
   const [errstate, setErrState] = useState(false);
-  const [errLogo, setErrLogo] = useState(false);
 
   const gstref = useRef(null);
   const panref = useRef(null);
@@ -89,11 +88,6 @@ export const Companydetails = () => {
 
   const handleError = async () => {
     let errorstatus = false;
-
-    if (!logo) {
-      setErrLogo(true);
-      errorstatus = true;
-    }
 
     if (!comp || comp.length < 3) {
       setErrComp(true);
@@ -164,14 +158,7 @@ export const Companydetails = () => {
     })
       .then(image => {
         setVisible(false);
-        const uri = image.path;
-        const file = {
-          uri: uri,
-          type: image.type,
-          name: 'image.jpg',
-        };
-        setLogo(file);
-        setErrLogo(false);
+        setLogo(image.path);
       })
       .catch(error => {
         setVisible(false);
@@ -188,14 +175,7 @@ export const Companydetails = () => {
     })
       .then(image => {
         setVisible(false);
-        const uri = image.path;
-        const file = {
-          uri: uri,
-          type: image.type,
-          name: 'image.jpg',
-        };
-        setLogo(file);
-        setErrLogo(false);
+        setLogo(image.path);
       })
       .catch(error => {
         setVisible(false);
@@ -302,7 +282,7 @@ export const Companydetails = () => {
         contentContainerStyle={styles.mainview}>
         {logo ? (
           <View style={styles.logoview}>
-            <Image source={logo} style={styles.logo} />
+            <Image source={{uri: logo}} style={styles.logo} />
             <TouchableOpacity
               style={styles.close}
               onPress={() => {
@@ -320,10 +300,6 @@ export const Companydetails = () => {
             <Text style={styles.uploadtext}>{appConstant.uploadlogo}</Text>
           </TouchableOpacity>
         )}
-
-        {errLogo ? (
-          <Text style={styles.errlogo}>{appConstant.logoerr}</Text>
-        ) : null}
 
         <Radiobutton value={value} onSelect={val => setValue(val)} />
 

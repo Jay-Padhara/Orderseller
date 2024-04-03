@@ -6,7 +6,7 @@ import {
   Image,
   ScrollView,
 } from 'react-native';
-import React, {useState} from 'react';
+import React from 'react';
 import {SafeAreaView} from 'react-native-safe-area-context';
 import {SvgIcon} from '../../assets/SvgIcon';
 import {
@@ -23,8 +23,6 @@ import {Images} from '../../helper/utils';
 
 export const Viewbuyer = ({route}) => {
   const navigation = useNavigation();
-
-  const [isopen, setOpen] = useState(false);
 
   const data = route?.params?.data?.createdByCompany;
   console.log(data, 'data');
@@ -141,7 +139,7 @@ export const Viewbuyer = ({route}) => {
           </View>
         </View>
 
-        <View style={styles.main}>
+        {/* <View style={styles.main}>
           <View style={styles.orderview}>
             <View style={styles.orderhead}>
               <Text style={styles.detailtext}>{appConstant.orderdetail}</Text>
@@ -235,7 +233,7 @@ export const Viewbuyer = ({route}) => {
               </>
             ) : null}
           </View>
-        </View>
+        </View> */}
       </ScrollView>
     </SafeAreaView>
   );

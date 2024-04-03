@@ -96,7 +96,7 @@ export const Popupmenu = ({
               onSelect={onPartial}
               text={appConstant.partialdelivered}
               orderstatus={true}>
-              {status1 === 'partial delivered' ? (
+              {status1 === 'partialDelivered' ? (
                 <SvgIcon.down_arrow width={rw(5.5)} height={rh(3)} />
               ) : null}
             </StatusMenu>

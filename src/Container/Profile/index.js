@@ -6,7 +6,7 @@ import {
   FlatList,
   Image,
 } from 'react-native';
-import React, {useCallback, useEffect, useRef, useState} from 'react';
+import React, {useCallback, useRef, useState} from 'react';
 import {colors} from '../../assets/colors';
 import {fonts} from '../../assets/fonts';
 import {
@@ -15,12 +15,12 @@ import {
   responsiveWidth as rw,
 } from 'react-native-responsive-dimensions';
 import {SvgIcon} from '../../assets/SvgIcon';
-import {useNavigation} from '@react-navigation/native';
+import {useFocusEffect, useNavigation} from '@react-navigation/native';
 import {SafeAreaView} from 'react-native-safe-area-context';
 import {appConstant} from '../../helper/appconstants';
 import {Delemodal} from '../../Components/Deletemodal.js';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import {handleMessage, reggst, states} from '../../helper/utils';
+import {handleMessage, reggst, regpan, states} from '../../helper/utils';
 import {Textinputs} from '../../Components/Textinputs';
 import {Line1} from '../../Components/Line';
 import {Button, Customview} from '../../Components/Button';
@@ -31,47 +31,16 @@ import {Bottommodal} from '../../Components/Bottommodal/index.js';
 import {Statemodal} from '../../Components/Statemodal/index.js';
 import ImageCropPicker from 'react-native-image-crop-picker';
 import {getalladdresses} from '../../Api/addressservice.js';
+import {getcompany, updatecompanies} from '../../Api/companyservice.js';
 
 export const Profile = () => {
   const navigation = useNavigation();
   const dispatch = useDispatch();
 
-  const userdetails = useSelector(state => state.login.login_data?.result);
-  const compid = userdetails?.company?.id;
+  const userdetails = useSelector(state => state.login.login_data);
+  // const compdetails = useSelector(state => state.createcomp.createcomp_data);
 
-  //GETALL ADDRESS
-  const handleAddress = useCallback(async () => {
-    try {
-      const response = await getalladdresses(dispatch, compid);
-      console.log(response, 'getall address');
-
-      if (!response?.error) {
-        setAddress(response?.result[0]?.addressName);
-        setAddline(response?.result[0]?.addressLine);
-        setLocality(response?.result[0]?.locality);
-        setPincode(response?.result[0]?.pincode);
-        setCity(response?.result[0]?.city);
-        setState(response?.result[0]?.state);
-      } else {
-        handleMessage(appConstant.error, response?.message, appConstant.danger);
-      }
-    } catch (error) {
-      console.log(error);
-    }
-  }, [dispatch, compid]);
-
-  useEffect(() => {
-    handleAddress();
-  }, [handleAddress]);
-
-  useEffect(() => {
-    setGstno(userdetails?.company?.gstNo);
-    setCompcode(userdetails?.company?.companyCode);
-    setComp(userdetails?.company?.companyName);
-    setName(userdetails?.company?.name);
-    setNumber(userdetails?.company?.phone);
-    setCompcode(userdetails?.company?.companyCode);
-  }, [userdetails]);
+  const compid = userdetails?.result?.company?.id;
 
   const [isoldshow, setOldshow] = useState(true);
   const [isloading, setLoading] = useState(false);
@@ -97,9 +66,12 @@ export const Profile = () => {
   const [filterdata, setFilterdata] = useState(states.sort());
   const statedata = states.sort();
 
+  const [mail, setMail] = useState();
+  const [joindate, setJoindate] = useState();
+  const [addressid, setAddressid] = useState();
+
   const [errgstno, setErrGstno] = useState(false);
   const [errpanno, setErrPanno] = useState(false);
-  const [errcompcode, setErrcompcode] = useState(false);
   const [errcomp, setErrComp] = useState(false);
   const [errname, setErrName] = useState(false);
   const [errnumber, setErrNumber] = useState(false);
@@ -109,9 +81,7 @@ export const Profile = () => {
   const [errpincode, setErrPincode] = useState(false);
   const [errcity, setErrCity] = useState(false);
   const [errstate, setErrState] = useState(false);
-  const [errLogo, setErrLogo] = useState(false);
 
-  const coderef = useRef(null);
   const compref = useRef(null);
   const nameref = useRef(null);
   const phoneref = useRef(null);
@@ -134,42 +104,88 @@ export const Profile = () => {
   const [errconfpass, setErrConfpass] = useState(false);
   const [errnotmatch, seterrNotmatch] = useState(false);
 
+  //GETALL ADDRESS
+  const handleAddress = useCallback(async () => {
+    try {
+      const response = await getalladdresses(dispatch, compid);
+      console.log(response, 'getall address');
+
+      if (!response?.error) {
+        const add = response?.result;
+        setAddressid(add[0]?.id);
+        setAddress(add[0]?.addressName);
+        setAddline(add[0]?.addressLine);
+        setLocality(add[0]?.locality);
+        setPincode(add[0]?.pincode);
+        setCity(add[0]?.city);
+        setState(add[0]?.state);
+      } else {
+        handleMessage(appConstant.error, response?.message, appConstant.danger);
+      }
+    } catch (error) {
+      console.log(error);
+    }
+  }, [dispatch, compid]);
+
+  useFocusEffect(
+    useCallback(() => {
+      handleAddress();
+    }, [handleAddress]),
+  );
+
+  //GET COMPANY
+  const handleCompany = useCallback(async () => {
+    try {
+      const response = await getcompany(dispatch, compid);
+      console.log(response, 'get company');
+
+      if (!response?.error) {
+        response?.result?.gstNo
+          ? setGstno(response?.result?.gstNo)
+          : setPanno(response?.result?.panNo);
+        setCompcode(response?.result?.companyCode);
+        setComp(response?.result?.companyName);
+        setName(response?.result?.name);
+        setNumber(response?.result?.phone);
+        setMail(response?.result?.createdBy?.email);
+        setJoindate(response?.result?.createdAt);
+      } else {
+        handleMessage(appConstant.error, response?.message, appConstant.danger);
+      }
+    } catch (error) {
+      console.log(error);
+    }
+  }, [dispatch, compid]);
+
+  useFocusEffect(
+    useCallback(() => {
+      handleCompany();
+    }, [handleCompany]),
+  );
+
   const handleEmpty = () => {
     setOldpass('');
     setNewpass('');
     setConfpass('');
   };
 
-  const handleEmpty1 = () => {
-    setGstno('');
-    setPanno('');
-    setLogo('');
-    setComp('');
-    setName('');
-    setNumber('');
-    setAddress('');
-    setAddline('');
-    setLocality('');
-    setPincode('');
-    setCity('');
-    setState('');
-  };
-
   const handleError1 = async () => {
     let errorstatus = false;
 
-    if (!logo) {
-      setErrLogo(true);
-      errorstatus = true;
+    if (gstno) {
+      if (!gstno || !reggst.test(gstno)) {
+        setErrGstno(true);
+        errorstatus = true;
+      }
+    } else {
+      if (!panno || !regpan.test(panno)) {
+        setErrPanno(true);
+        errorstatus = true;
+      }
     }
 
     if (!comp || comp.length < 3) {
       setErrComp(true);
-      errorstatus = true;
-    }
-
-    if (!name || name.length < 3) {
-      setErrName(true);
       errorstatus = true;
     }
 
@@ -205,11 +221,6 @@ export const Profile = () => {
 
     if (!state) {
       setErrState(true);
-      errorstatus = true;
-    }
-
-    if (!gstno || !reggst.test(gstno)) {
-      setErrGstno(true);
       errorstatus = true;
     }
 
@@ -257,7 +268,6 @@ export const Profile = () => {
           name: 'image.jpg',
         };
         setLogo(file);
-        setErrLogo(false);
       })
       .catch(error => {
         setCamera(false);
@@ -281,7 +291,6 @@ export const Profile = () => {
           name: 'image.jpg',
         };
         setLogo(file);
-        setErrLogo(false);
       })
       .catch(error => {
         setCamera(false);
@@ -341,14 +350,18 @@ export const Profile = () => {
             <View>
               <Text style={styles.txt}>{appConstant.name}</Text>
               <View style={styles.name}>
-                <Text style={styles.nametxt}>{userdetails?.company?.name}</Text>
+                <Text style={styles.nametxt}>
+                  {name ? name : userdetails?.createdBycompany?.name}
+                </Text>
               </View>
             </View>
 
             <View>
               <Text style={styles.txt}>{appConstant.email}</Text>
               <View style={styles.name}>
-                <Text style={styles.nametxt}>{userdetails?.email}</Text>
+                <Text style={styles.nametxt}>
+                  {mail ? mail : userdetails?.createdBycompany?.email}
+                </Text>
               </View>
             </View>
 
@@ -357,7 +370,8 @@ export const Profile = () => {
                 <Text style={styles.txt}>{appConstant.phoneplace}</Text>
                 <View style={styles.phone}>
                   <Text style={styles.phonetxt}>
-                    {appConstant.code} {userdetails?.company?.phone}
+                    {appConstant.code}
+                    {number ? number : userdetails?.createdBycompany?.phone}
                   </Text>
                 </View>
               </View>
@@ -366,7 +380,9 @@ export const Profile = () => {
                 <Text style={styles.txt}>{appConstant.joindate}</Text>
                 <View style={styles.phone}>
                   <Text style={styles.phonetxt}>
-                    {userdetails?.company?.createdAt.slice(0, 10)}
+                    {joindate
+                      ? joindate.slice(0, 10)
+                      : userdetails?.createdBycompany?.createdAt.slice(0, 10)}
                   </Text>
                 </View>
               </View>
@@ -577,9 +593,21 @@ export const Profile = () => {
 
               <TouchableOpacity
                 style={styles.dot}
-                onPress={() =>
-                  navigation.navigate(appConstant.createadd, {data: item})
-                }>
+                onPress={() => {
+                  const data = {
+                    address: address,
+                    addline: addline,
+                    locality: locality,
+                    city: city,
+                    pincode: pincode,
+                    state: state,
+                    id: addressid,
+                  };
+                  navigation.navigate(appConstant.createadd, {
+                    data: data,
+                    from: 'edit',
+                  });
+                }}>
                 <SvgIcon.popedit width={rw(4.5)} height={rh(4)} />
               </TouchableOpacity>
             </View>
@@ -623,40 +651,84 @@ export const Profile = () => {
 
             <View style={styles.areaview1}>
               <View style={styles.compname}>
-                <View style={styles.compshop}>
-                  <Text style={styles.comptxt}>{appConstant.gstno}</Text>
+                <View
+                  style={[
+                    styles.compshop,
+                    errgstno ? null : {marginBottom: rh(3.5)},
+                  ]}>
+                  {gstno ? (
+                    <>
+                      <Text style={styles.comptxt}>{appConstant.gstno}</Text>
+                      {/* GST NO */}
+                      <Textinputs
+                        color={colors.black}
+                        value={gstno}
+                        style={styles.textin1}
+                        onChangeText={text => {
+                          setGstno(text.toUpperCase());
+                          !text
+                            ? setErrGstno(false)
+                            : !reggst.test(text)
+                            ? setErrGstno(true)
+                            : setErrGstno(false);
+                        }}
+                        onSubmitEditing={() => {
+                          compref?.current.focus();
+                          !gstno
+                            ? setErrGstno(false)
+                            : !reggst.test(gstno)
+                            ? setErrGstno(true)
+                            : setErrGstno(false);
+                        }}
+                        returnKeyType="next"
+                      />
 
-                  {/* GSTNO */}
-                  <Textinputs
-                    color={colors.black}
-                    value={gstno}
-                    style={styles.textin1}
-                    onChangeText={text => {
-                      setGstno(text.toUpperCase());
-                      !text
-                        ? setErrGstno(false)
-                        : !reggst.test(text)
-                        ? setErrGstno(true)
-                        : setErrGstno(false);
-                    }}
-                    onSubmitEditing={() => {
-                      compref?.current.focus();
-                      !gstno
-                        ? setErrGstno(false)
-                        : !reggst.test(gstno)
-                        ? setErrGstno(true)
-                        : setErrGstno(false);
-                    }}
-                    returnKeyType="next"
-                  />
+                      {errgstno ? (
+                        <Text style={styles.errname}>{appConstant.gsterr}</Text>
+                      ) : null}
+                    </>
+                  ) : (
+                    <>
+                      <Text style={styles.comptxt}>{appConstant.panno}</Text>
+                      {/* PAN NO */}
+                      <Textinputs
+                        color={colors.black}
+                        value={panno}
+                        style={styles.textin1}
+                        onChangeText={text => {
+                          setPanno(text.toUpperCase());
+                          !text
+                            ? setErrPanno(false)
+                            : !regpan.test(text)
+                            ? setErrPanno(true)
+                            : setErrPanno(false);
+                        }}
+                        onSubmitEditing={() => {
+                          compref?.current.focus();
+                          !gstno
+                            ? setErrPanno(false)
+                            : !regpan.test(panno)
+                            ? setErrPanno(true)
+                            : setErrPanno(false);
+                        }}
+                        returnKeyType="next"
+                      />
 
-                  {errgstno ? (
-                    <Text style={styles.errname}>{appConstant.gsterr}</Text>
-                  ) : null}
+                      {errpanno ? (
+                        <Text style={styles.errname}>{appConstant.panerr}</Text>
+                      ) : null}
+                    </>
+                  )}
                 </View>
 
                 {/* COMPANYCODE */}
-                <View style={styles.compshop}>
+                <View
+                  style={[
+                    styles.compshop,
+                    errgstno
+                      ? {marginBottom: rh(3.6)}
+                      : {marginBottom: rh(3.6)},
+                  ]}>
                   <Text style={styles.comptxt}>{appConstant.compcode}</Text>
                   <View style={styles.textin1}>
                     <Text style={styles.compcode}>{compcode}</Text>
@@ -666,7 +738,11 @@ export const Profile = () => {
 
               {/* COMPANY NAME */}
               <View style={styles.compname}>
-                <View style={styles.compshop}>
+                <View
+                  style={[
+                    styles.compshop,
+                    errcomp ? null : {marginBottom: rh(3.5)},
+                  ]}>
                   <Text style={styles.comptxt}>{appConstant.complace}</Text>
                   <Textinputs
                     refe={compref}
@@ -697,7 +773,11 @@ export const Profile = () => {
                 </View>
 
                 {/* NAME */}
-                <View style={styles.compshop}>
+                <View
+                  style={[
+                    styles.compshop,
+                    errname ? null : {marginBottom: rh(3.5)},
+                  ]}>
                   <Text style={styles.comptxt}>{appConstant.name}</Text>
                   <Textinputs
                     refe={nameref}
@@ -730,7 +810,11 @@ export const Profile = () => {
 
               {/* ADDRESS NAME */}
               <View style={styles.compname}>
-                <View style={styles.compshop}>
+                <View
+                  style={[
+                    styles.compshop,
+                    erraddress ? null : {marginBottom: rh(3.5)},
+                  ]}>
                   <Text style={styles.comptxt}>{appConstant.address}</Text>
                   <Textinputs
                     refe={addref}
@@ -761,7 +845,11 @@ export const Profile = () => {
                 </View>
 
                 {/* PHONE NUMBER */}
-                <View style={styles.compshop}>
+                <View
+                  style={[
+                    styles.compshop,
+                    errnumber ? null : {marginBottom: rh(3.5)},
+                  ]}>
                   <Text style={styles.comptxt}>{appConstant.phonenumber}</Text>
                   <View style={styles.phone1}>
                     <Text style={styles.code}>{appConstant.code}</Text>
@@ -830,7 +918,11 @@ export const Profile = () => {
 
               {/* LOCALITY PINCODE */}
               <View style={styles.compname}>
-                <View style={styles.compshop}>
+                <View
+                  style={[
+                    styles.compshop,
+                    errlocality ? null : {marginBottom: rh(3.5)},
+                  ]}>
                   <Text style={styles.comptxt}>{appConstant.locality}</Text>
                   <Textinputs
                     refe={localityref}
@@ -861,7 +953,11 @@ export const Profile = () => {
                 </View>
 
                 {/* PINCODE */}
-                <View style={styles.compshop}>
+                <View
+                  style={[
+                    styles.compshop,
+                    errpincode ? null : {marginBottom: rh(3.5)},
+                  ]}>
                   <Text style={styles.comptxt}>{appConstant.pincode}</Text>
                   <Textinputs
                     refe={pincoderef}
@@ -873,7 +969,7 @@ export const Profile = () => {
                         : text.length < 3
                         ? setErrPincode(true)
                         : setErrPincode(false);
-                      setLocality(text);
+                      setPincode(text);
                     }}
                     style={styles.textin1}
                     onSubmitEditing={() => {
@@ -894,7 +990,11 @@ export const Profile = () => {
 
               {/* CITY STATE*/}
               <View style={styles.compname}>
-                <View style={styles.compshop}>
+                <View
+                  style={[
+                    styles.compshop,
+                    errcity ? null : {marginBottom: rh(3.5)},
+                  ]}>
                   <Text style={styles.comptxt}>{appConstant.city}</Text>
                   <Textinputs
                     refe={cityref}
@@ -924,7 +1024,11 @@ export const Profile = () => {
                 </View>
 
                 {/* STATE */}
-                <View style={styles.compshop}>
+                <View
+                  style={[
+                    styles.compshop,
+                    errstate ? null : {marginBottom: rh(3.5)},
+                  ]}>
                   <Text style={styles.comptxt}>{appConstant.state}</Text>
                   <TouchableOpacity
                     style={styles.textin1}
@@ -990,12 +1094,48 @@ export const Profile = () => {
   };
 
   const handleCompanydetails = async () => {
-    if (await handleError()) {
+    if (await handleError1()) {
       console.log('Encoutered error.....');
     } else {
       try {
         setLoading(true);
-        console.log('Hello world');
+
+        const formData = new FormData();
+
+        gstno
+          ? formData.append('gstNo', gstno)
+          : formData.append('panNo', panno);
+        formData.append('companyName', comp);
+        formData.append('name', name);
+        formData.append('phone', number);
+        formData.append('addressName', address);
+        formData.append('addressLine', addline);
+        formData.append('locality', locality);
+        formData.append('pincode', pincode);
+        formData.append('city', city);
+        formData.append('state', state);
+
+        console.log(formData, '.....', compid);
+
+        const response = await updatecompanies(dispatch, compid, formData);
+        console.log(response, 'update company response');
+
+        if (!response?.error) {
+          handleMessage(
+            appConstant.Success,
+            response?.message,
+            appConstant.success,
+          );
+          handleCompany();
+          handleAddress();
+        } else {
+          handleMessage(
+            appConstant.error,
+            response?.message,
+            appConstant.danger,
+          );
+        }
+
         setLoading(false);
       } catch (error) {
         console.log(error);
@@ -1331,7 +1471,7 @@ const styles = StyleSheet.create({
 
   compcode: {
     color: colors.labelgrey,
-    fontSize: rf(1.8),
+    fontSize: rf(1.9),
     fontFamily: fonts.medium,
     padding: rw(1),
   },
@@ -1360,7 +1500,7 @@ const styles = StyleSheet.create({
 
   submit: {
     color: colors.white,
-    fontSize: rf(1.8),
+    fontSize: rf(1.7),
     fontFamily: fonts.bold,
   },
 

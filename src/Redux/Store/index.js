@@ -24,6 +24,9 @@ import createorderreducer from '../Reducers/Orders/createorderreducer';
 import getalladdressreducer from '../Reducers/Address/getalladdressreducer';
 import createaddressreducer from '../Reducers/Address/createaddressreducer';
 import updatestatus from '../Reducers/Orders/orderstatusreducer';
+import updatecompanyreducer from '../Reducers/Company/updatecompanyreducer';
+import updateaddressreducer from '../Reducers/Address/updateaddressreducer';
+import getcompanyreducer from '../Reducers/Company/getcompanyreducer';
 
 export const store = configureStore({
   reducer: {
@@ -52,5 +55,8 @@ export const store = configureStore({
     getalladdress: getalladdressreducer,
     createaddress: createaddressreducer,
     updatestatus: updatestatus,
+    updatecompany: updatecompanyreducer,
+    updateaddress: updateaddressreducer,
+    getcompany: getcompanyreducer,
   },
 });

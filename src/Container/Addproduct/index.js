@@ -50,7 +50,6 @@ export const Addproduct = ({route}) => {
   const [unit, setUnit] = useState();
   const [description, setDescription] = useState();
 
-  const [errlogo, setErrlogo] = useState(false);
   const [errsku, setErrSku] = useState(false);
   const [errcategory, setErrcategory] = useState(false);
   const [errname, setErrName] = useState(false);
@@ -65,7 +64,6 @@ export const Addproduct = ({route}) => {
   const descref = useRef(null);
 
   const handleData = useCallback(async () => {
-    setLogo(data?.image);
     setSku(data?.sku);
     setCategoryname(data?.category?.categoryName);
     setCategorycode(data?.category?.id);
@@ -105,11 +103,6 @@ export const Addproduct = ({route}) => {
 
   const handleError = async () => {
     let errorstatus = false;
-
-    if (!logo) {
-      setErrlogo(true);
-      errorstatus = true;
-    }
 
     if (!sku || !sku.length > 1) {
       setErrSku(true);
@@ -170,15 +163,7 @@ export const Addproduct = ({route}) => {
     })
       .then(image => {
         setVisible(false);
-        const uri = image?.path;
-        const file = {
-          uri: uri,
-          type: image?.mime,
-          name: 'image.jpg',
-        };
-        console.log(file);
-        setLogo(file);
-        setErrlogo(false);
+        setLogo(image.path);
       })
       .catch(error => {
         setVisible(false);
@@ -195,15 +180,7 @@ export const Addproduct = ({route}) => {
     })
       .then(image => {
         setVisible(false);
-        const uri = image?.path;
-        const file = {
-          uri: uri,
-          type: image?.mime,
-          name: 'image.jpg',
-        };
-        console.log(file);
-        setLogo(file);
-        setErrlogo(false);
+        setLogo(image.path);
       })
       .catch(error => {
         setVisible(false);
@@ -239,7 +216,6 @@ export const Addproduct = ({route}) => {
         setLoading(true);
 
         const formData = new FormData();
-        formData.append('image', logo);
         formData.append('sku', sku);
         formData.append('category', categorycode);
         formData.append('productName', name);
@@ -283,7 +259,6 @@ export const Addproduct = ({route}) => {
         setLoading(true);
 
         const formData = new FormData();
-        formData.append('image', logo);
         formData.append('sku', sku);
         formData.append('category', categorycode);
         formData.append('productName', name);
@@ -364,7 +339,7 @@ export const Addproduct = ({route}) => {
         contentContainerStyle={styles.mainview}>
         {logo ? (
           <View style={styles.logoview}>
-            <Image source={data ? {uri: logo} : logo} style={styles.logo} />
+            <Image source={{uri: logo}} style={styles.logo} />
             <TouchableOpacity
               style={styles.close}
               onPress={() => {
@@ -383,10 +358,6 @@ export const Addproduct = ({route}) => {
         )}
 
         <Text style={styles.imgtext}>{appConstant.image}</Text>
-
-        {errlogo ? (
-          <Text style={styles.errname}>{appConstant.errlogo}</Text>
-        ) : null}
 
         <View style={styles.sku}>
           <Text style={styles.skutxt}>{appConstant.sku}</Text>

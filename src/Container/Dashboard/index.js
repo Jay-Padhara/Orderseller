@@ -107,7 +107,7 @@ const styles = StyleSheet.create({
   },
 
   hello: {
-    fontSize: rf(2),
+    fontSize: rf(2.3),
     color: colors.labelgrey,
     fontFamily: fonts.medium,
   },

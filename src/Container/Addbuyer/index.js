@@ -62,7 +62,6 @@ export const Addbuyer = ({route}) => {
   const [errpincode, setErrPincode] = useState(false);
   const [errcity, setErrCity] = useState(false);
   const [errstate, setErrState] = useState(false);
-  const [errLogo, setErrLogo] = useState(false);
 
   const gstref = useRef(null);
   const panref = useRef(null);
@@ -76,14 +75,15 @@ export const Addbuyer = ({route}) => {
   const cityref = useRef(null);
 
   const handleData = useCallback(async () => {
-    data?.createdByCompany?.gstNo ? value === 0 : value === 1;
-
-    value === 0 ? setGstno(data?.gstNo) : data?.panNo;
-    setComp(data?.companyName);
-    setName(data?.name);
-    setNumber(data?.phone);
-
+    console.log(data);
     if (data && data?.addresses?.length > 0) {
+      data?.gstNo
+        ? (setGstno(data?.gstNo), setValue(0))
+        : (setPanno(data?.panNo), setValue(1));
+
+      setComp(data?.companyName);
+      setName(data?.name);
+      setNumber(data?.phone);
       setAddress(data.addresses[0]?.addressName || '');
       setAddline(data.addresses[0]?.addressLine || '');
       setLocality(data.addresses[0]?.locality || '');
@@ -93,7 +93,7 @@ export const Addbuyer = ({route}) => {
     } else {
       handleEmpty();
     }
-  }, [data, value]);
+  }, [data]);
 
   useEffect(() => {
     if (route?.params) {
@@ -125,11 +125,6 @@ export const Addbuyer = ({route}) => {
 
   const handleError = async () => {
     let errorstatus = false;
-
-    if (!logo) {
-      setErrLogo(true);
-      errorstatus = true;
-    }
 
     if (!comp || comp.length < 3) {
       setErrComp(true);
@@ -207,7 +202,6 @@ export const Addbuyer = ({route}) => {
           name: 'image.jpg',
         };
         setLogo(file);
-        setErrLogo(false);
       })
       .catch(error => {
         setVisible(false);
@@ -231,7 +225,6 @@ export const Addbuyer = ({route}) => {
           name: 'image.jpg',
         };
         setLogo(file);
-        setErrLogo(false);
       })
       .catch(error => {
         setVisible(false);
@@ -277,6 +270,7 @@ export const Addbuyer = ({route}) => {
             response?.message,
             appConstant.success,
           );
+          navigation.navigate(appConstant.buyer);
         } else {
           handleMessage(
             appConstant.error,
@@ -370,10 +364,6 @@ export const Addbuyer = ({route}) => {
         )}
 
         <Text style={styles.uploadtext}>{appConstant.uplogo}</Text>
-
-        {errLogo ? (
-          <Text style={styles.errlogo}>{appConstant.logoerr}</Text>
-        ) : null}
 
         <Radiobutton value={value} onSelect={val => setValue(val)} />
 

@@ -1,19 +1,19 @@
 import React from 'react';
-import {Text, StyleSheet, View, TouchableOpacity} from 'react-native';
-import {SafeAreaView} from 'react-native-safe-area-context';
-import {colors} from '../../assets/colors';
-import {fonts} from '../../assets/fonts';
+import { Text, StyleSheet, View, TouchableOpacity } from 'react-native';
+import { SafeAreaView } from 'react-native-safe-area-context';
+import { colors } from '../../assets/colors';
+import { fonts } from '../../assets/fonts';
 import {
   responsiveFontSize as rf,
   responsiveHeight as rh,
   responsiveWidth as rw,
 } from 'react-native-responsive-dimensions';
-import {SvgIcon} from '../../assets/SvgIcon';
-import {useNavigation} from '@react-navigation/native';
-import {appConstant} from '../../helper/appconstants';
-import {Customview} from '../../Components/Button';
+import { SvgIcon } from '../../assets/SvgIcon';
+import { useNavigation } from '@react-navigation/native';
+import { appConstant } from '../../helper/appconstants';
+import { Customview } from '../../Components/Button';
 
-export const Vieworder = ({route}) => {
+export const Vieworder = ({ route }) => {
   const navigation = useNavigation();
 
   const data = route.params.data;
@@ -207,7 +207,7 @@ const styles = StyleSheet.create({
     borderRadius: 20,
     elevation: 15,
     shadowColor: colors.labelgrey,
-    shadowOffset: {width: 0, height: 4},
+    shadowOffset: { width: 0, height: 4 },
     shadowOpacity: 0.8,
   },
 
@@ -217,7 +217,7 @@ const styles = StyleSheet.create({
   },
 
   htext: {
-    fontSize: rf(1.48),
+    fontSize: rf(1.4),
     color: colors.black,
     marginTop: rw(1.5),
     marginBottom: rw(1),
@@ -226,7 +226,7 @@ const styles = StyleSheet.create({
 
   btext: {
     width: rw(40),
-    fontSize: rf(1.7),
+    fontSize: rf(1.65),
     color: colors.labelgrey,
     fontFamily: fonts.semibold,
   },
@@ -250,7 +250,7 @@ const styles = StyleSheet.create({
     elevation: 15,
     padding: rw(5),
     shadowColor: colors.labelgrey,
-    shadowOffset: {width: 0, height: 4},
+    shadowOffset: { width: 0, height: 4 },
     shadowOpacity: 0.8,
   },
 

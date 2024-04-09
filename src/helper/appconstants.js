@@ -89,6 +89,7 @@ export const appConstant = {
   addlineerr: 'Invalid address line',
   comperr: 'Invalid company name',
   nameerr: 'Invalid name',
+  codeerr: 'Invalid code',
   numerr: 'Invalid number',
   addname: 'Invalid address',
   localerr: 'Invalid locality',

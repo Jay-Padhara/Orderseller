@@ -1,33 +1,33 @@
-import {View, Text, TouchableOpacity, StyleSheet} from 'react-native';
-import React, {useCallback, useEffect, useState} from 'react';
-import {SafeAreaView} from 'react-native-safe-area-context';
-import {colors} from '../../assets/colors';
-import {fonts} from '../../assets/fonts';
+import { View, Text, TouchableOpacity, StyleSheet, ScrollView } from 'react-native';
+import React, { useCallback, useEffect, useState } from 'react';
+import { SafeAreaView } from 'react-native-safe-area-context';
+import { colors } from '../../assets/colors';
+import { fonts } from '../../assets/fonts';
 import {
   responsiveFontSize as rf,
   responsiveHeight as rh,
   responsiveWidth as rw,
 } from 'react-native-responsive-dimensions';
-import {SvgIcon} from '../../assets/SvgIcon';
-import {appConstant} from '../../helper/appconstants';
-import {useFocusEffect, useNavigation} from '@react-navigation/native';
-import {Button} from '../../Components/Button';
-import {Textinputs} from '../../Components/Textinputs';
-import {Datepicker} from '../../Components/Datepicker';
-import {Line} from '../../Components/Line';
-import {KeyboardAwareScrollView} from 'react-native-keyboard-aware-scroll-view';
-import {getallbuyers} from '../../Api/buyerservice';
-import {useDispatch, useSelector} from 'react-redux';
-import {handleMessage} from '../../helper/utils';
-import {getallproducts} from '../../Api/productservice';
-import {Buyermodal} from '../../Components/Buyermodal';
-import {Statusmodal} from '../../Components/Statusmodal';
-import {Addressmodal} from '../../Components/Addressmodal';
-import {getalladdresses} from '../../Api/addressservice';
-import {createorders, updateorders} from '../../Api/orderservice';
-import {Loader} from '../../Components/Loader';
+import { SvgIcon } from '../../assets/SvgIcon';
+import { appConstant } from '../../helper/appconstants';
+import { useFocusEffect, useNavigation } from '@react-navigation/native';
+import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
+import { Button } from '../../Components/Button';
+import { Textinputs } from '../../Components/Textinputs';
+import { Datepicker } from '../../Components/Datepicker';
+import { Line } from '../../Components/Line';
+import { getallbuyers } from '../../Api/buyerservice';
+import { useDispatch, useSelector } from 'react-redux';
+import { handleMessage } from '../../helper/utils';
+import { getallproducts } from '../../Api/productservice';
+import { Buyermodal } from '../../Components/Buyermodal';
+import { Statusmodal } from '../../Components/Statusmodal';
+import { Addressmodal } from '../../Components/Addressmodal';
+import { getalladdresses } from '../../Api/addressservice';
+import { createorders, updateorders } from '../../Api/orderservice';
+import { Loader } from '../../Components/Loader';
 
-export const Addorder = ({route}) => {
+export const Addorder = ({ route }) => {
   const navigation = useNavigation();
   const dispatch = useDispatch();
 
@@ -86,31 +86,31 @@ export const Addorder = ({route}) => {
     setSelecteddate(data?.approxDeliveryDate);
     setDeliveryadd(
       data?.deliveryAddress?.addressName +
-        ' ' +
-        data?.deliveryAddress?.addressLine +
-        ' ' +
-        data?.deliveryAddress?.locality +
-        ', ' +
-        data?.deliveryAddress?.city +
-        ', ' +
-        data?.deliveryAddress?.state +
-        '-' +
-        data?.deliveryAddress?.pincode +
-        '.',
+      ' ' +
+      data?.deliveryAddress?.addressLine +
+      ' ' +
+      data?.deliveryAddress?.locality +
+      ', ' +
+      data?.deliveryAddress?.city +
+      ', ' +
+      data?.deliveryAddress?.state +
+      '-' +
+      data?.deliveryAddress?.pincode +
+      '.',
     );
     setBillingadd(
       data?.billingAddress?.addressName +
-        ' ' +
-        data?.billingAddress?.addressLine +
-        ' ' +
-        data?.billingAddress?.locality +
-        ', ' +
-        data?.billingAddress?.city +
-        ', ' +
-        data?.billingAddress?.state +
-        '-' +
-        data?.billingAddress?.pincode +
-        '.',
+      ' ' +
+      data?.billingAddress?.addressLine +
+      ' ' +
+      data?.billingAddress?.locality +
+      ', ' +
+      data?.billingAddress?.city +
+      ', ' +
+      data?.billingAddress?.state +
+      '-' +
+      data?.billingAddress?.pincode +
+      '.',
     );
     setDaddid(data?.deliveryAddress?.id);
     setBaddid(data?.billingAddress?.id);
@@ -167,7 +167,7 @@ export const Addorder = ({route}) => {
   const handleError2 = async () => {
     let errorstatus = false;
 
-    if (!notes || !notes.length > 2) {
+    if (!notes || !notes.length > 1) {
       setErrnotes(true);
       errorstatus = true;
     }
@@ -546,7 +546,7 @@ export const Addorder = ({route}) => {
               <Text style={styles.cate}>
                 {buyercomp ? buyercomp : appConstant.selectbuyer}
               </Text>
-              <SvgIcon.down_arrow width={rw(9)} height={rh(4)} />
+              <SvgIcon.down_arrow width={rw(9)} height={rh(3.5)} />
             </TouchableOpacity>
             {errbuyer ? (
               <Text style={styles.errname}>
@@ -563,7 +563,7 @@ export const Addorder = ({route}) => {
                 <Text style={styles.cate}>
                   {productname ? productname : appConstant.selectproduct}
                 </Text>
-                <SvgIcon.down_arrow width={rw(9)} height={rh(4)} />
+                <SvgIcon.down_arrow width={rw(9)} height={rh(3.5)} />
               </TouchableOpacity>
 
               <View style={styles.incdec}>
@@ -573,7 +573,7 @@ export const Addorder = ({route}) => {
                       prevQuantity === 0 ? 0 : prevQuantity - 1,
                     )
                   }>
-                  <SvgIcon.dec width={rh(2.5)} height={rh(2.8)} />
+                  <SvgIcon.dec width={rh(2.3)} height={rh(1)} />
                 </TouchableOpacity>
 
                 <Text style={styles.ctext}>{quantity}</Text>
@@ -588,7 +588,7 @@ export const Addorder = ({route}) => {
                       return updateqty;
                     });
                   }}>
-                  <SvgIcon.inc width={rh(2.4)} height={rh(2.4)} />
+                  <SvgIcon.inc width={rh(2.3)} height={rh(2)} />
                 </TouchableOpacity>
               </View>
             </View>
@@ -652,7 +652,7 @@ export const Addorder = ({route}) => {
           <View style={styles.bcompany}>
             <Text style={styles.btext}>{appConstant.notes}</Text>
             <Textinputs
-              placeholder={from ? (notes ? notes : '-') : appConstant.notes}
+              placeholder={notes}
               color={colors.labelgrey}
               style={styles.textin}
               value={notes}
@@ -661,16 +661,16 @@ export const Addorder = ({route}) => {
                 setNotes(text);
                 !text
                   ? setErrnotes(false)
-                  : text.length < 2
-                  ? setErrnotes(true)
-                  : setErrnotes(false);
+                  : text.length < 1
+                    ? setErrnotes(true)
+                    : setErrnotes(false);
               }}
               onBlur={() => {
                 !notes
                   ? setErrnotes(false)
-                  : !notes.length > 2
-                  ? setErrnotes(true)
-                  : setErrnotes(false);
+                  : !notes.length > 1
+                    ? setErrnotes(true)
+                    : setErrnotes(false);
               }}
             />
             {errnotes ? (
@@ -726,7 +726,7 @@ export const Addorder = ({route}) => {
               <TouchableOpacity
                 style={[
                   styles.plus,
-                  deliveryadd ? {paddingVertical: rh(1.6)} : null,
+                  deliveryadd ? { paddingVertical: rh(1.6) } : null,
                 ]}
                 onPress={() => navigation.navigate(appConstant.createadd)}>
                 <SvgIcon.whiteplus width={rw(7)} height={rh(6)} />
@@ -755,7 +755,7 @@ export const Addorder = ({route}) => {
               <TouchableOpacity
                 style={[
                   styles.plus,
-                  billingadd ? {paddingVertical: rh(1.6)} : null,
+                  billingadd ? { paddingVertical: rh(1.6) } : null,
                 ]}
                 onPress={() => navigation.navigate(appConstant.createadd)}>
                 <SvgIcon.whiteplus width={rw(7)} height={rh(6)} />
@@ -766,24 +766,27 @@ export const Addorder = ({route}) => {
             ) : null}
 
             {/* STATUS */}
-            <Text style={styles.btext}>{appConstant.orderstatus}</Text>
-            <TouchableOpacity
-              style={styles.catetextin}
-              onPress={() => setStatusmodal(true)}>
-              <Text style={styles.cate}>
-                {status ? status : appConstant.statuss}
-              </Text>
-              <SvgIcon.down_arrow width={rw(9)} height={rh(4)} />
-            </TouchableOpacity>
+            <View style={styles.status}>
+              <Text style={styles.btext}>{appConstant.orderstatus}</Text>
+              <TouchableOpacity
+                style={styles.catetextin}
+                onPress={() => setStatusmodal(true)}>
+                <Text style={styles.cate}>
+                  {status ? status : appConstant.statuss}
+                </Text>
+                <SvgIcon.down_arrow width={rw(9)} height={rh(4)} />
+              </TouchableOpacity>
+              {errstatus ? (
+                <Text style={styles.errname}>{appConstant.errstatus}</Text>
+              ) : null}
+            </View>
+
           </View>
-          {errstatus ? (
-            <Text style={styles.errname}>{appConstant.errstatus}</Text>
-          ) : null}
         </KeyboardAwareScrollView>
       )}
 
       {pagevalue === 2 && (
-        <KeyboardAwareScrollView showsVerticalScrollIndicator={false}>
+        <ScrollView showsVerticalScrollIndicator={false}>
           <View style={styles.quantity}>
             <View style={styles.quantity1}>
               <View style={styles.one}>
@@ -874,17 +877,12 @@ export const Addorder = ({route}) => {
             {appConstant.total}
             <Text style={styles.totaltxt}>₹{quantity * productprice}.00</Text>
           </Text>
-        </KeyboardAwareScrollView>
+        </ScrollView>
       )}
 
       {/* BOTTOM BUTTONS */}
       <View
-        style={[
-          styles.canceldel,
-          pagevalue === 0
-            ? {marginTop: rh(4)}
-            : {marginBottom: rh(2.3), marginTop: rh(4)},
-        ]}>
+        style={styles.canceldel}>
         <View style={styles.cancelview}>
           <TouchableOpacity
             style={styles.cancel}
@@ -892,8 +890,8 @@ export const Addorder = ({route}) => {
               pagevalue === 0
                 ? () => navigation.goBack()
                 : pagevalue === 1
-                ? () => setPagevalue(0)
-                : () => setPagevalue(1)
+                  ? () => setPagevalue(0)
+                  : () => setPagevalue(1)
             }>
             <Text style={styles.canceltext}>
               {pagevalue === 0 ? appConstant.cancel : appConstant.back}
@@ -944,7 +942,7 @@ const styles = StyleSheet.create({
     borderRadius: 20,
     elevation: 15,
     shadowColor: colors.labelgrey,
-    shadowOffset: {width: 0, height: 4},
+    shadowOffset: { width: 0, height: 4 },
     shadowOpacity: 0.8,
   },
 
@@ -1021,7 +1019,7 @@ const styles = StyleSheet.create({
     marginLeft: rw(0.2),
     color: colors.labelgrey,
     fontFamily: fonts.medium,
-    fontSize: rf(1.8),
+    fontSize: rf(1.75),
   },
 
   errname: {
@@ -1082,7 +1080,7 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
     backgroundColor: colors.grey,
     borderRadius: 13,
-    padding: rh(1.6),
+    padding: rh(1.5),
     marginHorizontal: rw(4),
   },
 
@@ -1093,12 +1091,12 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     backgroundColor: colors.grey,
     borderRadius: 13,
-    padding: rh(1.6),
+    padding: rh(1.4),
     marginHorizontal: rw(4),
   },
 
   cate: {
-    fontSize: rf(2.1),
+    fontSize: rf(2),
     color: colors.labelgrey,
     fontFamily: fonts.medium,
   },
@@ -1106,14 +1104,14 @@ const styles = StyleSheet.create({
   btext: {
     marginLeft: rw(5),
     margin: rw(3),
-    fontSize: rf(2),
+    fontSize: rf(1.9),
     color: colors.black,
     fontFamily: fonts.medium,
   },
 
   ctext: {
     marginHorizontal: rw(3),
-    fontSize: rf(2.9),
+    fontSize: rf(2.6),
     color: colors.black,
     fontFamily: fonts.medium,
   },
@@ -1134,18 +1132,22 @@ const styles = StyleSheet.create({
     marginTop: rh(3),
     backgroundColor: colors.primary,
     borderRadius: 10,
-    padding: rw(3.1),
+    padding: rw(2.7),
     marginLeft: rw(5),
   },
 
   submit: {
     color: colors.white,
-    fontSize: rf(2),
+    fontSize: rf(1.8),
     fontFamily: fonts.bold,
   },
 
   total: {
-    marginTop: rh(23),
+    position: 'absolute',
+    bottom: rh(12),
+    left: 0,
+    right: 0,
+    marginTop: rh(18),
     backgroundColor: colors.primary,
     padding: rh(1.6),
   },
@@ -1156,10 +1158,15 @@ const styles = StyleSheet.create({
   },
 
   canceldel: {
+    position: 'absolute',
+    bottom: 0,
+    left: 0,
+    right: 0,
+    padding: rh(2.5),
+    backgroundColor: colors.white,
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'center',
-    bottom: rh(1),
   },
 
   cancelview: {
@@ -1233,7 +1240,7 @@ const styles = StyleSheet.create({
     color: colors.labelgrey,
     width: rw(67),
     padding: rh(0.3),
-    fontSize: rf(1.9),
+    fontSize: rf(1.74),
     fontFamily: fonts.medium,
   },
 
@@ -1276,11 +1283,16 @@ const styles = StyleSheet.create({
     marginLeft: rw(4.6),
   },
 
+  status: {
+    marginBottom: rh(13)
+  },
+
   totalam: {
     color: colors.primary,
     fontFamily: fonts.semibold,
     fontSize: rf(1.8),
     marginLeft: rw(4.6),
+    marginBottom: rh(15),
   },
 
   pro: {

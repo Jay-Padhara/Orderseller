@@ -1,26 +1,26 @@
-import {View, Text, StyleSheet, TouchableOpacity} from 'react-native';
-import React, {useEffect, useRef, useState} from 'react';
-import {colors} from '../../assets/colors';
-import {fonts} from '../../assets/fonts';
-import {appConstant} from '../../helper/appconstants';
-import {useNavigation} from '@react-navigation/native';
-import {SvgIcon} from '../../assets/SvgIcon';
-import {SafeAreaView} from 'react-native-safe-area-context';
+import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
+import React, { useEffect, useRef, useState } from 'react';
+import { colors } from '../../assets/colors';
+import { fonts } from '../../assets/fonts';
+import { appConstant } from '../../helper/appconstants';
+import { useNavigation } from '@react-navigation/native';
+import { SvgIcon } from '../../assets/SvgIcon';
+import { SafeAreaView } from 'react-native-safe-area-context';
 import {
   responsiveFontSize as rf,
   responsiveHeight as rh,
   responsiveWidth as rw,
 } from 'react-native-responsive-dimensions';
-import {Textinputs} from '../../Components/Textinputs';
-import {Statemodal} from '../../Components/Statemodal';
-import {KeyboardAwareScrollView} from 'react-native-keyboard-aware-scroll-view';
-import {handleMessage, states} from '../../helper/utils';
-import {Button} from '../../Components/Button';
-import {Loader} from '../../Components/Loader';
-import {useDispatch, useSelector} from 'react-redux';
-import {createaddresses, updateaddresses} from '../../Api/addressservice';
+import { Textinputs } from '../../Components/Textinputs';
+import { Statemodal } from '../../Components/Statemodal';
+import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
+import { handleMessage, states } from '../../helper/utils';
+import { Button } from '../../Components/Button';
+import { Loader } from '../../Components/Loader';
+import { useDispatch, useSelector } from 'react-redux';
+import { createaddresses, updateaddresses } from '../../Api/addressservice';
 
-export const Createaddress = ({route}) => {
+export const Createaddress = ({ route }) => {
   const navigation = useNavigation();
   const dispatch = useDispatch();
 
@@ -164,7 +164,7 @@ export const Createaddress = ({route}) => {
             appConstant.success,
           );
           handleEmpty();
-          navigation.navigate(from && appConstant.profile);
+          navigation.navigate(appConstant.profile);
         } else {
           handleMessage(
             appConstant.error,
@@ -219,8 +219,8 @@ export const Createaddress = ({route}) => {
               !text
                 ? setErrAddress(false)
                 : !text.length > 2
-                ? setErrAddress(true)
-                : setErrAddress(false);
+                  ? setErrAddress(true)
+                  : setErrAddress(false);
               setAddress(text);
             }}
             color={colors.black}
@@ -230,8 +230,8 @@ export const Createaddress = ({route}) => {
               !address
                 ? null
                 : !address.length > 2
-                ? setErrAddress(true)
-                : setErrAddress(false);
+                  ? setErrAddress(true)
+                  : setErrAddress(false);
             }}
             returnKeyType="next"
           />
@@ -249,8 +249,8 @@ export const Createaddress = ({route}) => {
               !text
                 ? setErrAddline(false)
                 : !text.length > 2
-                ? setErrAddline(true)
-                : setErrAddline(false);
+                  ? setErrAddline(true)
+                  : setErrAddline(false);
               setAddline(text);
             }}
             color={colors.black}
@@ -260,8 +260,8 @@ export const Createaddress = ({route}) => {
               !addline
                 ? null
                 : !addline.length > 2
-                ? setErrAddline(true)
-                : setErrAddline(false);
+                  ? setErrAddline(true)
+                  : setErrAddline(false);
             }}
             returnKeyType="next"
           />
@@ -279,8 +279,8 @@ export const Createaddress = ({route}) => {
               !text
                 ? setErrLocality(false)
                 : !text.length > 2
-                ? setErrLocality(true)
-                : setErrLocality(false);
+                  ? setErrLocality(true)
+                  : setErrLocality(false);
               setLocality(text);
             }}
             color={colors.black}
@@ -290,8 +290,8 @@ export const Createaddress = ({route}) => {
               !addline
                 ? null
                 : !addline.length > 2
-                ? setErrLocality(true)
-                : setErrLocality(false);
+                  ? setErrLocality(true)
+                  : setErrLocality(false);
             }}
             returnKeyType="next"
           />
@@ -309,8 +309,8 @@ export const Createaddress = ({route}) => {
               !text
                 ? setErrPincode(false)
                 : !text.length > 2
-                ? setErrPincode(true)
-                : setErrPincode(false);
+                  ? setErrPincode(true)
+                  : setErrPincode(false);
               setPincode(text);
             }}
             color={colors.black}
@@ -320,8 +320,8 @@ export const Createaddress = ({route}) => {
               !pincode
                 ? null
                 : !pincode.length > 2
-                ? setErrPincode(true)
-                : setErrPincode(false);
+                  ? setErrPincode(true)
+                  : setErrPincode(false);
             }}
             keyboardType="numeric"
             returnKeyType="next"
@@ -340,8 +340,8 @@ export const Createaddress = ({route}) => {
               !text
                 ? setErrCity(false)
                 : !text.length > 2
-                ? setErrCity(true)
-                : setErrCity(false);
+                  ? setErrCity(true)
+                  : setErrCity(false);
               setCity(text);
             }}
             color={colors.black}
@@ -350,8 +350,8 @@ export const Createaddress = ({route}) => {
               !city
                 ? null
                 : !city.length > 2
-                ? setErrCity(true)
-                : setErrCity(false);
+                  ? setErrCity(true)
+                  : setErrCity(false);
             }}
             returnKeyType="done"
           />
@@ -416,7 +416,7 @@ const styles = StyleSheet.create({
     borderRadius: 20,
     elevation: 15,
     shadowColor: colors.labelgrey,
-    shadowOffset: {width: 0, height: 4},
+    shadowOffset: { width: 0, height: 4 },
     shadowOpacity: 0.8,
   },
 

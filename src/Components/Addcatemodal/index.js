@@ -8,16 +8,16 @@ import {
   TextInput,
 } from 'react-native';
 import React from 'react';
-import {colors} from '../../assets/colors';
+import { colors } from '../../assets/colors';
 import {
   responsiveFontSize as rf,
   responsiveHeight as rh,
   responsiveWidth as rw,
 } from 'react-native-responsive-dimensions';
-import {SvgIcon} from '../../assets/SvgIcon';
-import {appConstant} from '../../helper/appconstants';
-import {fonts} from '../../assets/fonts';
-import {Button} from '../Button';
+import { SvgIcon } from '../../assets/SvgIcon';
+import { appConstant } from '../../helper/appconstants';
+import { fonts } from '../../assets/fonts';
+import { Button } from '../Button';
 
 export const Addcatemodal = ({
   ref1,
@@ -32,6 +32,8 @@ export const Addcatemodal = ({
   onAdd,
   onEdit,
   onSubmitEditing,
+  error1,
+  error2,
 }) => {
   return (
     <>
@@ -63,6 +65,9 @@ export const Addcatemodal = ({
                 onChangeText={text => code(text)}
                 onSubmitEditing={onSubmitEditing}
               />
+              {error1 ? (
+                <Text style={styles.errname}>{appConstant.codeerr}</Text>
+              ) : null}
 
               <Text style={styles.codetext}>{appConstant.catename}</Text>
               <TextInput
@@ -70,9 +75,13 @@ export const Addcatemodal = ({
                 style={styles.textin}
                 blurOnSubmit
                 value={value2}
-                returnKeyType="next"
+                returnKeyType="done"
                 onChangeText={text => name(text)}
+                onSubmitEditing={onSubmitEditing}
               />
+              {error2 ? (
+                <Text style={styles.errname}>{appConstant.nameerr}</Text>
+              ) : null}
 
               {type ? (
                 <Button
@@ -158,7 +167,7 @@ const styles = StyleSheet.create({
 
   touchsignin: {
     alignItems: 'center',
-    marginTop: rh(6),
+    marginTop: rh(2),
     backgroundColor: colors.primary,
     borderRadius: 10,
     padding: rw(4),
@@ -170,5 +179,13 @@ const styles = StyleSheet.create({
     color: colors.white,
     fontSize: rf(2.1),
     fontFamily: fonts.bold,
+  },
+
+  errname: {
+    textAlign: 'right',
+    color: colors.red,
+    fontSize: rf(1.5),
+    marginRight: rw(5),
+    fontFamily: fonts.medium,
   },
 });

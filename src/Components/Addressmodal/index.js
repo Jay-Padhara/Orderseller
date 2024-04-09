@@ -8,15 +8,16 @@ import {
   StatusBar,
 } from 'react-native';
 import React from 'react';
-import {SvgIcon} from '../../assets/SvgIcon';
-import {appConstant} from '../../helper/appconstants';
-import {fonts} from '../../assets/fonts';
+import { SvgIcon } from '../../assets/SvgIcon';
+import { appConstant } from '../../helper/appconstants';
+import { fonts } from '../../assets/fonts';
 import {
   responsiveFontSize as rf,
   responsiveHeight as rh,
   responsiveWidth as rw,
 } from 'react-native-responsive-dimensions';
-import {colors} from '../../assets/colors';
+import { colors } from '../../assets/colors';
+import { Line1 } from '../Line';
 
 export const Addressmodal = ({
   visible,
@@ -52,10 +53,13 @@ export const Addressmodal = ({
                   <Text style={styles.nocatdata}>{nocategory}</Text>
                 </View>
               }
-              renderItem={({item}) => {
+              renderItem={({ item }) => {
                 return (
-                  <>
-                    <TouchableOpacity onPress={() => onselect(item)}>
+                  <View style={styles.address}>
+                    <TouchableOpacity onPress={() => onselect(item)} style={styles.add}>
+                      <View style={styles.icon}>
+                        <SvgIcon.frame width={rw(5)} height={rh(5)} />
+                      </View>
                       <Text style={styles.statetext}>
                         {item?.addressName +
                           ' ' +
@@ -71,7 +75,9 @@ export const Addressmodal = ({
                           '.'}
                       </Text>
                     </TouchableOpacity>
-                  </>
+                    <Line1 />
+
+                  </View>
                 );
               }}
             />
@@ -121,9 +127,8 @@ const styles = StyleSheet.create({
   statetext: {
     color: colors.labelgrey,
     fontFamily: fonts.semibold,
-    fontSize: rf(2.2),
-    margin: rh(1.5),
-    marginTop: rh(3),
+    fontSize: rf(2),
+    marginLeft: rw(6),
   },
 
   num: {
@@ -143,7 +148,7 @@ const styles = StyleSheet.create({
     borderRadius: 20,
     elevation: 10,
     shadowColor: colors.labelgrey,
-    shadowOffset: {width: 0, height: 4},
+    shadowOffset: { width: 0, height: 4 },
     shadowOpacity: 0.8,
   },
 
@@ -154,6 +159,17 @@ const styles = StyleSheet.create({
   nocat: {
     alignItems: 'center',
     marginTop: rh(10),
+  },
+
+  address: {
+    alignContent: 'center',
+    marginHorizontal: rw(6),
+    margin: rw(3)
+  },
+
+  add: {
+    flexDirection: 'row',
+    marginBottom: rh(1.5)
   },
 
   nocatdata: {

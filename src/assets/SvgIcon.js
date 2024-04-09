@@ -59,6 +59,7 @@ import three from './Svgs/three.svg';
 import calender from './Svgs/calender.svg';
 import whiteplus from './Svgs/whiteplus.svg';
 import line2 from './Svgs/line2.svg';
+import logout from './Svgs/logout.svg';
 
 export const SvgIcon = {
   avtar,
@@ -122,4 +123,5 @@ export const SvgIcon = {
   calender,
   whiteplus,
   line2,
+  logout
 };

@@ -5,41 +5,41 @@ import {
   StyleSheet,
   FlatList,
   Image,
+  ScrollView,
 } from 'react-native';
-import React, {useCallback, useRef, useState} from 'react';
-import {colors} from '../../assets/colors';
-import {fonts} from '../../assets/fonts';
+import React, { useCallback, useRef, useState } from 'react';
+import { colors } from '../../assets/colors';
+import { fonts } from '../../assets/fonts';
 import {
   responsiveFontSize as rf,
   responsiveHeight as rh,
   responsiveWidth as rw,
 } from 'react-native-responsive-dimensions';
-import {SvgIcon} from '../../assets/SvgIcon';
-import {useFocusEffect, useNavigation} from '@react-navigation/native';
-import {SafeAreaView} from 'react-native-safe-area-context';
-import {appConstant} from '../../helper/appconstants';
-import {Delemodal} from '../../Components/Deletemodal.js';
+import { SvgIcon } from '../../assets/SvgIcon';
+import { useFocusEffect, useNavigation } from '@react-navigation/native';
+import { SafeAreaView } from 'react-native-safe-area-context';
+import { appConstant } from '../../helper/appconstants';
+import { Delemodal } from '../../Components/Deletemodal.js';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import {handleMessage, reggst, regpan, states} from '../../helper/utils';
-import {Textinputs} from '../../Components/Textinputs';
-import {Line1} from '../../Components/Line';
-import {Button, Customview} from '../../Components/Button';
-import {Loader} from '../../Components/Loader/index.js';
-import {changepasswords} from '../../Api/Authentication.js';
-import {useDispatch, useSelector} from 'react-redux';
-import {Bottommodal} from '../../Components/Bottommodal/index.js';
-import {Statemodal} from '../../Components/Statemodal/index.js';
+import { handleMessage, reggst, regpan, states } from '../../helper/utils';
+import { Textinputs } from '../../Components/Textinputs';
+import { Line1 } from '../../Components/Line';
+import { Button, Customview } from '../../Components/Button';
+import { Loader } from '../../Components/Loader/index.js';
+import { changepasswords } from '../../Api/Authentication.js';
+import { useDispatch, useSelector } from 'react-redux';
+import { Bottommodal } from '../../Components/Bottommodal/index.js';
+import { Statemodal } from '../../Components/Statemodal/index.js';
 import ImageCropPicker from 'react-native-image-crop-picker';
-import {getalladdresses} from '../../Api/addressservice.js';
-import {getcompany, updatecompanies} from '../../Api/companyservice.js';
+import { getalladdresses } from '../../Api/addressservice.js';
+import { getcompany, updatecompanies } from '../../Api/companyservice.js';
+import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
 
 export const Profile = () => {
   const navigation = useNavigation();
   const dispatch = useDispatch();
 
   const userdetails = useSelector(state => state.login.login_data);
-  // const compdetails = useSelector(state => state.createcomp.createcomp_data);
-
   const compid = userdetails?.result?.company?.id;
 
   const [isoldshow, setOldshow] = useState(true);
@@ -65,6 +65,8 @@ export const Profile = () => {
   const [logo, setLogo] = useState();
   const [filterdata, setFilterdata] = useState(states.sort());
   const statedata = states.sort();
+
+  const [addressdata, setAddressdata] = useState();
 
   const [mail, setMail] = useState();
   const [joindate, setJoindate] = useState();
@@ -119,6 +121,7 @@ export const Profile = () => {
         setPincode(add[0]?.pincode);
         setCity(add[0]?.city);
         setState(add[0]?.state);
+        setAddressdata(response?.result);
       } else {
         handleMessage(appConstant.error, response?.message, appConstant.danger);
       }
@@ -299,10 +302,10 @@ export const Profile = () => {
   };
 
   const profiledata = [
-    {title: appConstant.myprofile, icon: 'pavtar', key: 'myprofile'},
-    {title: appConstant.compdetails, icon: 'pcomp', key: 'compdetail'},
-    {title: appConstant.changepass, icon: 'plock', key: 'changepass'},
-    {title: appConstant.addres, icon: 'paddress', key: 'address'},
+    { title: appConstant.myprofile, icon: 'pavtar', key: 'myprofile' },
+    { title: appConstant.compdetails, icon: 'pcomp', key: 'compdetail' },
+    { title: appConstant.changepass, icon: 'plock', key: 'changepass' },
+    { title: appConstant.addres, icon: 'paddress', key: 'address' },
   ];
 
   const iconMapping = {
@@ -314,7 +317,7 @@ export const Profile = () => {
 
   const toggleSection = key => {
     setOpen(prevOpen => {
-      const newState = {...prevOpen};
+      const newState = { ...prevOpen };
       Object.keys(newState).forEach(sectionKey => {
         if (sectionKey !== key) {
           newState[sectionKey] = false;
@@ -325,7 +328,7 @@ export const Profile = () => {
     });
   };
 
-  const renderItem = ({item}) => {
+  const renderItem = ({ item }) => {
     const Svgicon = iconMapping[item?.icon];
 
     return (
@@ -411,16 +414,16 @@ export const Profile = () => {
                   !text
                     ? setErrOldpass(false)
                     : text.length < 6
-                    ? setErrOldpass(true)
-                    : setErrOldpass(false);
+                      ? setErrOldpass(true)
+                      : setErrOldpass(false);
                 }}
                 onSubmitEditing={() => {
                   newref?.current.focus();
                   !oldpass
                     ? setErrOldpass(false)
                     : oldpass.length < 6
-                    ? setErrOldpass(true)
-                    : setErrOldpass(false);
+                      ? setErrOldpass(true)
+                      : setErrOldpass(false);
                 }}
                 returnKeyType="next"
               />
@@ -456,16 +459,16 @@ export const Profile = () => {
                   !text
                     ? setErrNewpass(false)
                     : text.length < 6
-                    ? setErrNewpass(true)
-                    : setErrNewpass(false);
+                      ? setErrNewpass(true)
+                      : setErrNewpass(false);
                 }}
                 onSubmitEditing={() => {
                   confref?.current.focus();
                   !newpass
                     ? setErrNewpass(false)
                     : newpass.length < 6
-                    ? setErrNewpass(true)
-                    : setErrNewpass(false);
+                      ? setErrNewpass(true)
+                      : setErrNewpass(false);
                 }}
                 returnKeyType="next"
               />
@@ -497,8 +500,8 @@ export const Profile = () => {
                 !text
                   ? setErrConfpass(false)
                   : text.length < 6
-                  ? setErrConfpass(true)
-                  : setErrConfpass(false);
+                    ? setErrConfpass(true)
+                    : setErrConfpass(false);
 
                 seterrNotmatch(text.length < 6 ? text !== newpass : false);
               }}
@@ -506,8 +509,8 @@ export const Profile = () => {
                 !confpass
                   ? setErrConfpass(false)
                   : confpass.length < 6
-                  ? setErrConfpass(true)
-                  : setErrConfpass(false);
+                    ? setErrConfpass(true)
+                    : setErrConfpass(false);
 
                 confpass !== newpass
                   ? seterrNotmatch(true)
@@ -533,84 +536,97 @@ export const Profile = () => {
 
         {/* CHANGE ADDRESS */}
         {isopen[item?.key] && item?.key === 'address' && (
-          <>
+
+          <View style={styles.bottom}>
+
             <Line1 />
 
-            <View style={styles.addview}>
-              <View style={styles.prodesc}>
-                <Customview
-                  style={styles.comp}
-                  headstyle={styles.htext}
-                  head={appConstant.address}
-                  text={address}
-                  textstyle={styles.btext}
-                />
+            <FlatList
+              data={addressdata}
+              keyExtractor={(item, index) => index.toString()}
+              renderItem={({ item }) => {
+                return (
+                  <>
+                    <View style={styles.addview}>
 
-                <Customview
-                  style={styles.comp}
-                  headstyle={styles.htext}
-                  head={appConstant.addline}
-                  text={addline}
-                  textstyle={styles.btext}
-                />
-              </View>
+                      <View style={styles.prodesc}>
+                        <Customview
+                          style={styles.comp}
+                          headstyle={styles.htext}
+                          head={appConstant.address}
+                          text={item?.addressName}
+                          textstyle={styles.btext}
+                        />
 
-              <View style={styles.prodesc}>
-                <Customview
-                  style={styles.comp}
-                  headstyle={styles.htext}
-                  head={appConstant.locality}
-                  text={locality}
-                  textstyle={styles.btext}
-                />
+                        <Customview
+                          style={styles.comp}
+                          headstyle={styles.htext}
+                          head={appConstant.addline}
+                          text={item?.addressLine}
+                          textstyle={styles.btext}
+                        />
+                      </View>
 
-                <Customview
-                  style={styles.comp}
-                  headstyle={styles.htext}
-                  head={appConstant.city}
-                  text={city}
-                  textstyle={styles.btext}
-                />
-              </View>
+                      <View style={styles.prodesc}>
+                        <Customview
+                          style={styles.comp}
+                          headstyle={styles.htext}
+                          head={appConstant.locality}
+                          text={item?.locality}
+                          textstyle={styles.btext}
+                        />
 
-              <View style={styles.prodesc}>
-                <Customview
-                  style={styles.comp}
-                  headstyle={styles.htext}
-                  head={appConstant.state}
-                  text={state}
-                  textstyle={styles.btext}
-                />
+                        <Customview
+                          style={styles.comp}
+                          headstyle={styles.htext}
+                          head={appConstant.city}
+                          text={item?.city}
+                          textstyle={styles.btext}
+                        />
+                      </View>
 
-                <Customview
-                  style={styles.comp}
-                  headstyle={styles.htext}
-                  head={appConstant.pincode}
-                  text={pincode}
-                  textstyle={styles.btext}
-                />
-              </View>
+                      <View style={styles.prodesc}>
+                        <Customview
+                          style={styles.comp}
+                          headstyle={styles.htext}
+                          head={appConstant.state}
+                          text={item?.state}
+                          textstyle={styles.btext}
+                        />
 
-              <TouchableOpacity
-                style={styles.dot}
-                onPress={() => {
-                  const data = {
-                    address: address,
-                    addline: addline,
-                    locality: locality,
-                    city: city,
-                    pincode: pincode,
-                    state: state,
-                    id: addressid,
-                  };
-                  navigation.navigate(appConstant.createadd, {
-                    data: data,
-                    from: 'edit',
-                  });
-                }}>
-                <SvgIcon.popedit width={rw(4.5)} height={rh(4)} />
-              </TouchableOpacity>
-            </View>
+                        <Customview
+                          style={styles.comp}
+                          headstyle={styles.htext}
+                          head={appConstant.pincode}
+                          text={item?.pincode}
+                          textstyle={styles.btext}
+                        />
+                      </View>
+
+                      <TouchableOpacity
+                        style={styles.dot}
+                        onPress={() => {
+                          const data = {
+                            address: item?.addressName,
+                            addline: item?.addressLine,
+                            locality: item?.locality,
+                            city: item?.city,
+                            pincode: item?.pincode,
+                            state: item?.state,
+                            id: item?.id,
+                          };
+                          navigation.navigate(appConstant.createadd, {
+                            data: data,
+                            from: 'edit',
+                          });
+                        }}>
+                        <SvgIcon.popedit width={rw(4.5)} height={rh(4)} />
+                      </TouchableOpacity>
+                    </View>
+                  </>
+                );
+              }}
+            />
 
             <Button
               style={styles.addresstouch}
@@ -618,7 +634,7 @@ export const Profile = () => {
               textstyle={styles.submit}
               onPress={() => navigation.navigate(appConstant.createadd)}
             />
-          </>
+          </View>
         )}
 
         {/* COMPANY DETAILS */}
@@ -654,7 +670,7 @@ export const Profile = () => {
                 <View
                   style={[
                     styles.compshop,
-                    errgstno ? null : {marginBottom: rh(3.5)},
+                    errgstno ? null : { marginBottom: rh(3.5) },
                   ]}>
                   {gstno ? (
                     <>
@@ -669,16 +685,16 @@ export const Profile = () => {
                           !text
                             ? setErrGstno(false)
                             : !reggst.test(text)
-                            ? setErrGstno(true)
-                            : setErrGstno(false);
+                              ? setErrGstno(true)
+                              : setErrGstno(false);
                         }}
                         onSubmitEditing={() => {
                           compref?.current.focus();
                           !gstno
                             ? setErrGstno(false)
                             : !reggst.test(gstno)
-                            ? setErrGstno(true)
-                            : setErrGstno(false);
+                              ? setErrGstno(true)
+                              : setErrGstno(false);
                         }}
                         returnKeyType="next"
                       />
@@ -700,16 +716,16 @@ export const Profile = () => {
                           !text
                             ? setErrPanno(false)
                             : !regpan.test(text)
-                            ? setErrPanno(true)
-                            : setErrPanno(false);
+                              ? setErrPanno(true)
+                              : setErrPanno(false);
                         }}
                         onSubmitEditing={() => {
                           compref?.current.focus();
                           !gstno
                             ? setErrPanno(false)
                             : !regpan.test(panno)
-                            ? setErrPanno(true)
-                            : setErrPanno(false);
+                              ? setErrPanno(true)
+                              : setErrPanno(false);
                         }}
                         returnKeyType="next"
                       />
@@ -726,8 +742,8 @@ export const Profile = () => {
                   style={[
                     styles.compshop,
                     errgstno
-                      ? {marginBottom: rh(3.6)}
-                      : {marginBottom: rh(3.6)},
+                      ? { marginBottom: rh(3.6) }
+                      : { marginBottom: rh(3.6) },
                   ]}>
                   <Text style={styles.comptxt}>{appConstant.compcode}</Text>
                   <View style={styles.textin1}>
@@ -741,7 +757,7 @@ export const Profile = () => {
                 <View
                   style={[
                     styles.compshop,
-                    errcomp ? null : {marginBottom: rh(3.5)},
+                    errcomp ? null : { marginBottom: rh(3.5) },
                   ]}>
                   <Text style={styles.comptxt}>{appConstant.complace}</Text>
                   <Textinputs
@@ -751,8 +767,8 @@ export const Profile = () => {
                       !text
                         ? setErrComp(false)
                         : text.length < 3
-                        ? setErrComp(true)
-                        : setErrComp(false);
+                          ? setErrComp(true)
+                          : setErrComp(false);
                       setComp(text);
                     }}
                     color={colors.black}
@@ -762,8 +778,8 @@ export const Profile = () => {
                       !comp
                         ? setErrComp(false)
                         : comp.length < 3
-                        ? setErrComp(true)
-                        : setErrComp(false);
+                          ? setErrComp(true)
+                          : setErrComp(false);
                     }}
                     returnKeyType="next"
                   />
@@ -776,7 +792,7 @@ export const Profile = () => {
                 <View
                   style={[
                     styles.compshop,
-                    errname ? null : {marginBottom: rh(3.5)},
+                    errname ? null : { marginBottom: rh(3.5) },
                   ]}>
                   <Text style={styles.comptxt}>{appConstant.name}</Text>
                   <Textinputs
@@ -786,8 +802,8 @@ export const Profile = () => {
                       !text
                         ? setErrName(false)
                         : text.length < 3
-                        ? setErrName(true)
-                        : setErrName(false);
+                          ? setErrName(true)
+                          : setErrName(false);
                       setName(text);
                     }}
                     color={colors.black}
@@ -797,8 +813,8 @@ export const Profile = () => {
                       !name
                         ? setErrName(false)
                         : name.length < 3
-                        ? setErrName(true)
-                        : setErrName(false);
+                          ? setErrName(true)
+                          : setErrName(false);
                     }}
                     returnKeyType="next"
                   />
@@ -813,7 +829,7 @@ export const Profile = () => {
                 <View
                   style={[
                     styles.compshop,
-                    erraddress ? null : {marginBottom: rh(3.5)},
+                    erraddress ? null : { marginBottom: rh(3.5) },
                   ]}>
                   <Text style={styles.comptxt}>{appConstant.address}</Text>
                   <Textinputs
@@ -824,8 +840,8 @@ export const Profile = () => {
                       !text
                         ? setErrAddress(false)
                         : text.length < 3
-                        ? setErrAddress(true)
-                        : setErrAddress(false);
+                          ? setErrAddress(true)
+                          : setErrAddress(false);
                       setAddress(text);
                     }}
                     style={styles.textin1}
@@ -834,8 +850,8 @@ export const Profile = () => {
                       !address
                         ? setErrAddress(false)
                         : address.length < 3
-                        ? setErrAddress(true)
-                        : setErrAddress(false);
+                          ? setErrAddress(true)
+                          : setErrAddress(false);
                     }}
                     returnKeyType="next"
                   />
@@ -848,7 +864,7 @@ export const Profile = () => {
                 <View
                   style={[
                     styles.compshop,
-                    errnumber ? null : {marginBottom: rh(3.5)},
+                    errnumber ? null : { marginBottom: rh(3.5) },
                   ]}>
                   <Text style={styles.comptxt}>{appConstant.phonenumber}</Text>
                   <View style={styles.phone1}>
@@ -861,8 +877,8 @@ export const Profile = () => {
                         !text
                           ? setErrNumber(false)
                           : text.length <= 9
-                          ? setErrNumber(true)
-                          : setErrNumber(false);
+                            ? setErrNumber(true)
+                            : setErrNumber(false);
                         setNumber(text);
                       }}
                       style={styles.phonetext}
@@ -872,8 +888,8 @@ export const Profile = () => {
                         !number
                           ? setErrNumber(false)
                           : number.length <= 9
-                          ? setErrNumber(true)
-                          : setErrNumber(false);
+                            ? setErrNumber(true)
+                            : setErrNumber(false);
                       }}
                       returnKeyType="next"
                       keyboardType="number-pad"
@@ -895,8 +911,8 @@ export const Profile = () => {
                     !text
                       ? setErrAddline(false)
                       : text.length < 3
-                      ? setErrAddline(true)
-                      : setErrAddline(false);
+                        ? setErrAddline(true)
+                        : setErrAddline(false);
                     setAddline(text);
                   }}
                   color={colors.black}
@@ -906,8 +922,8 @@ export const Profile = () => {
                     !addline
                       ? setErrAddline(false)
                       : addline.length < 3
-                      ? setErrAddline(true)
-                      : setErrAddline(false);
+                        ? setErrAddline(true)
+                        : setErrAddline(false);
                   }}
                   returnKeyType="next"
                 />
@@ -921,7 +937,7 @@ export const Profile = () => {
                 <View
                   style={[
                     styles.compshop,
-                    errlocality ? null : {marginBottom: rh(3.5)},
+                    errlocality ? null : { marginBottom: rh(3.5) },
                   ]}>
                   <Text style={styles.comptxt}>{appConstant.locality}</Text>
                   <Textinputs
@@ -932,8 +948,8 @@ export const Profile = () => {
                       !text
                         ? setErrLocality(false)
                         : text.length < 3
-                        ? setErrLocality(true)
-                        : setErrLocality(false);
+                          ? setErrLocality(true)
+                          : setErrLocality(false);
                       setLocality(text);
                     }}
                     style={styles.textin1}
@@ -942,8 +958,8 @@ export const Profile = () => {
                       !locality
                         ? setErrLocality(false)
                         : locality.length < 3
-                        ? setErrLocality(true)
-                        : setErrLocality(false);
+                          ? setErrLocality(true)
+                          : setErrLocality(false);
                     }}
                     returnKeyType="next"
                   />
@@ -956,7 +972,7 @@ export const Profile = () => {
                 <View
                   style={[
                     styles.compshop,
-                    errpincode ? null : {marginBottom: rh(3.5)},
+                    errpincode ? null : { marginBottom: rh(3.5) },
                   ]}>
                   <Text style={styles.comptxt}>{appConstant.pincode}</Text>
                   <Textinputs
@@ -967,8 +983,8 @@ export const Profile = () => {
                       !text
                         ? setErrPincode(false)
                         : text.length < 3
-                        ? setErrPincode(true)
-                        : setErrPincode(false);
+                          ? setErrPincode(true)
+                          : setErrPincode(false);
                       setPincode(text);
                     }}
                     style={styles.textin1}
@@ -977,8 +993,8 @@ export const Profile = () => {
                       !pincode
                         ? setErrPincode(false)
                         : pincode.length < 3
-                        ? setErrPincode(true)
-                        : setErrPincode(false);
+                          ? setErrPincode(true)
+                          : setErrPincode(false);
                     }}
                     returnKeyType="next"
                   />
@@ -993,7 +1009,7 @@ export const Profile = () => {
                 <View
                   style={[
                     styles.compshop,
-                    errcity ? null : {marginBottom: rh(3.5)},
+                    errcity ? null : { marginBottom: rh(3.5) },
                   ]}>
                   <Text style={styles.comptxt}>{appConstant.city}</Text>
                   <Textinputs
@@ -1004,8 +1020,8 @@ export const Profile = () => {
                       !text
                         ? setErrCity(false)
                         : text.length < 3
-                        ? setErrCity(true)
-                        : setErrCity(false);
+                          ? setErrCity(true)
+                          : setErrCity(false);
                       setCity(text);
                     }}
                     style={styles.textin1}
@@ -1013,8 +1029,8 @@ export const Profile = () => {
                       !city
                         ? setErrCity(false)
                         : city.length < 3
-                        ? setErrCity(true)
-                        : setErrCity(false);
+                          ? setErrCity(true)
+                          : setErrCity(false);
                     }}
                     returnKeyType="next"
                   />
@@ -1027,7 +1043,7 @@ export const Profile = () => {
                 <View
                   style={[
                     styles.compshop,
-                    errstate ? null : {marginBottom: rh(3.5)},
+                    errstate ? null : { marginBottom: rh(3.5) },
                   ]}>
                   <Text style={styles.comptxt}>{appConstant.state}</Text>
                   <TouchableOpacity
@@ -1213,6 +1229,12 @@ export const Profile = () => {
         </TouchableOpacity>
 
         <Text style={styles.text}>{appConstant.profile}</Text>
+
+        <TouchableOpacity
+          style={styles.add}
+          onPress={() => setVisible(true)}>
+          <SvgIcon.logout width={rh(3.6)} height={rh(3.6)} />
+        </TouchableOpacity>
       </View>
 
       <View>
@@ -1222,11 +1244,6 @@ export const Profile = () => {
           renderItem={renderItem}
         />
       </View>
-
-      <TouchableOpacity style={styles.delete} onPress={() => setVisible(true)}>
-        <SvgIcon.del width={rh(2.8)} height={rh(2.8)} />
-        <Text style={styles.txt}>{appConstant.logout}</Text>
-      </TouchableOpacity>
     </SafeAreaView>
   );
 };
@@ -1245,6 +1262,22 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
   },
 
+  add: {
+    position: 'absolute',
+    right: 0,
+    width: rw(12),
+    height: rh(6),
+    padding: rw(2),
+    alignItems: 'center',
+    justifyContent: 'center',
+    backgroundColor: colors.white,
+    borderRadius: 20,
+    elevation: 15,
+    shadowColor: colors.labelgrey,
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.8,
+  },
+
   back: {
     position: 'absolute',
     left: 0,
@@ -1257,7 +1290,7 @@ const styles = StyleSheet.create({
     borderRadius: 20,
     elevation: 15,
     shadowColor: colors.labelgrey,
-    shadowOffset: {width: 0, height: 4},
+    shadowOffset: { width: 0, height: 4 },
     shadowOpacity: 0.8,
   },
 
@@ -1273,8 +1306,12 @@ const styles = StyleSheet.create({
     borderRadius: 10,
     elevation: 15,
     shadowColor: colors.labelgrey,
-    shadowOffset: {width: 0, height: 4},
+    shadowOffset: { width: 0, height: 4 },
     shadowOpacity: 0.8,
+  },
+
+  bottom: {
+    marginBottom: rh(7)
   },
 
   areaview: {
@@ -1286,7 +1323,7 @@ const styles = StyleSheet.create({
   areaview1: {
     alignItems: 'center',
     justifyContent: 'center',
-    padding: rw(3),
+    padding: rw(1),
   },
 
   prodesc: {
@@ -1300,7 +1337,7 @@ const styles = StyleSheet.create({
     borderRadius: 10,
     elevation: 15,
     shadowColor: colors.labelgrey,
-    shadowOffset: {width: 0, height: 4},
+    shadowOffset: { width: 0, height: 4 },
     shadowOpacity: 0.8,
     flexDirection: 'row',
     alignItems: 'center',

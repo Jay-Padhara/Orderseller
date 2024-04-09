@@ -1,4 +1,4 @@
-import React, {useCallback, useEffect, useRef, useState} from 'react';
+import React, { useCallback, useEffect, useRef, useState } from 'react';
 import {
   View,
   Text,
@@ -7,29 +7,29 @@ import {
   FlatList,
   TextInput,
 } from 'react-native';
-import {SafeAreaView} from 'react-native-safe-area-context';
-import {SvgIcon} from '../../assets/SvgIcon';
+import { SafeAreaView } from 'react-native-safe-area-context';
+import { SvgIcon } from '../../assets/SvgIcon';
 import {
   responsiveFontSize as rf,
   responsiveHeight as rh,
   responsiveWidth as rw,
 } from 'react-native-responsive-dimensions';
-import {colors} from '../../assets/colors';
-import {fonts} from '../../assets/fonts';
-import {appConstant} from '../../helper/appconstants';
-import {useNavigation} from '@react-navigation/native';
+import { colors } from '../../assets/colors';
+import { fonts } from '../../assets/fonts';
+import { appConstant } from '../../helper/appconstants';
+import { useNavigation } from '@react-navigation/native';
 import {
   addnewcategory,
   deletecategories,
   editcategories,
   getallcategory,
 } from '../../Api/categoryservice';
-import {useDispatch, useSelector} from 'react-redux';
-import {Addcatemodal} from '../../Components/Addcatemodal';
-import {Delemodal} from '../../Components/Deletemodal.js';
-import {Importcate} from '../../Components/Importcatemodal/index.js';
-import {handleMessage} from '../../helper/utils.js';
-import {Loader} from '../../Components/Loader/index.js';
+import { useDispatch, useSelector } from 'react-redux';
+import { Addcatemodal } from '../../Components/Addcatemodal';
+import { Delemodal } from '../../Components/Deletemodal.js';
+import { Importcate } from '../../Components/Importcatemodal/index.js';
+import { handleMessage } from '../../helper/utils.js';
+import { Loader } from '../../Components/Loader/index.js';
 import ImageCropPicker from 'react-native-image-crop-picker';
 
 export const Category = () => {
@@ -53,8 +53,27 @@ export const Category = () => {
   const [catid, setCatid] = useState();
   const [delid, setDelid] = useState();
 
+  const [errcatecode, setErrcatecode] = useState(false);
+  const [errcatename, setErrcatename] = useState(false);
+
   const coderef = useRef();
   const nameref = useRef();
+
+  const handleError = async () => {
+    let errorstatus = false;
+
+    if (!catcode || catcode.length < 2) {
+      setErrcatecode(true);
+      errorstatus = true;
+    }
+
+    if (!catname || catname.length < 2) {
+      setErrcatename(true);
+      errorstatus = true;
+    }
+
+    return errorstatus;
+  };
 
   const handleGallery = () => {
     ImageCropPicker.openPicker({
@@ -125,74 +144,97 @@ export const Category = () => {
 
   const handleCode = async text => {
     setCatcode(text);
+    if (!text || text.length < 2) {
+      setErrcatecode(true);
+    } else {
+      setErrcatecode(false);
+    }
+
   };
 
   const handleName = async text => {
     setCatname(text);
+    if (!text || text.length < 2) {
+      setErrcatename(true);
+    } else {
+      setErrcatename(false);
+    }
   };
 
   //ADD NEW CATEGORIES
   const handleAddcategory = async () => {
-    try {
-      setLoading(true);
+    if (await handleError()) {
+      console.log('Encoutered error...');
+    } else {
+      try {
+        setLoading(true);
 
-      const data = {
-        categoryName: catname,
-        categoryCode: catcode,
-      };
+        const data = {
+          categoryName: catname,
+          categoryCode: catcode,
+        };
 
-      const response = await addnewcategory(dispatch, data);
-      console.log(response, 'add category response');
+        const response = await addnewcategory(dispatch, data);
+        console.log(response, 'add category response');
 
-      if (!response?.error) {
-        handleMessage(
-          appConstant.Success,
-          response?.message,
-          appConstant.success,
-        );
-        setvisisble(false);
-        handleEmpty();
-        handleCategory();
-      } else {
-        handleMessage(appConstant.error, response?.message, appConstant.danger);
+        if (!response?.error) {
+          handleMessage(
+            appConstant.Success,
+            response?.message,
+            appConstant.success,
+          );
+          setvisisble(false);
+          handleEmpty();
+          handleCategory();
+        } else {
+          handleMessage(
+            appConstant.error,
+            response?.message,
+            appConstant.danger,
+          );
+        }
+        setLoading(false);
+      } catch (error) {
+        console.log(error);
+      } finally {
       }
-      setLoading(false);
-    } catch (error) {
-      console.log(error);
-    } finally {
     }
   };
 
   //EDIT CATEGORIES
   const handleEditcategory = async () => {
-    try {
-      setLoading(true);
+    if (await handleError()) {
+      console.log('Encoutered error...');
+    } else {
+      try {
+        setLoading(true);
 
-      const data = {
-        categoryName: catname,
-        categoryCode: catcode,
-        isPublished: isPublish,
-      };
+        const data = {
+          categoryName: catname,
+          categoryCode: catcode,
+          isPublished: isPublish,
+        };
 
-      const response = await editcategories(dispatch, catid, data);
-      console.log(response, 'edit category response');
+        const response = await editcategories(dispatch, catid, data);
+        console.log(response, 'edit category response');
 
-      if (!response?.error) {
-        handleMessage(
-          appConstant.Success,
-          response?.message,
-          appConstant.success,
-        );
-        setShow(false);
-        handleEmpty();
-        handleCategory();
-      } else {
-        handleMessage(appConstant.error, response?.message, appConstant.danger);
+        if (!response?.error) {
+          handleMessage(
+            appConstant.Success,
+            response?.message,
+            appConstant.success,
+          );
+          setShow(false);
+          handleEmpty();
+          handleCategory();
+        } else {
+          handleMessage(appConstant.error, response?.message, appConstant.danger);
+        }
+        setLoading(false);
+      } catch (error) {
+        console.log(error);
+      } finally {
       }
-      setLoading(false);
-    } catch (error) {
-      console.log(error);
-    } finally {
     }
   };
 
@@ -253,7 +295,23 @@ export const Category = () => {
         value2={catname}
         code={handleCode}
         name={handleName}
-        onSubmitEditing={() => nameref?.current.focus()}
+        error1={errcatecode}
+        error2={errcatename}
+        onSubmitEditing={() => {
+          if (!catcode || catcode.length < 2) {
+            setErrcatecode(true);
+          } else {
+            setErrcatecode(false);
+          }
+
+          if (!catname || catname.length < 2) {
+            setErrcatename(true);
+          } else {
+            setErrcatename(false);
+          }
+          nameref?.current.focus();
+        }}
+
         onAdd={handleAddcategory}
       />
       <Addcatemodal
@@ -265,7 +323,22 @@ export const Category = () => {
         onclose={() => setShow(false)}
         code={handleCode}
         name={handleName}
-        onSubmitEditing={() => nameref?.current.focus()}
+        error1={errcatecode}
+        error2={errcatename}
+        onSubmitEditing={() => {
+          if (!catcode || catcode.length < 2) {
+            setErrcatecode(true);
+          } else {
+            setErrcatecode(false);
+          }
+
+          if (!catname || catname.length < 2) {
+            setErrcatename(true);
+          } else {
+            setErrcatename(false);
+          }
+          nameref?.current.focus();
+        }}
         onEdit={handleEditcategory}
       />
 
@@ -323,7 +396,7 @@ export const Category = () => {
       <FlatList
         data={filtercatedata}
         keyExtractor={(item, index) => index}
-        renderItem={({item, index}) => {
+        renderItem={({ item, index }) => {
           return (
             <View style={styles.contain}>
               <View style={styles.editdel}>
@@ -394,7 +467,7 @@ const styles = StyleSheet.create({
     borderRadius: 20,
     elevation: 15,
     shadowColor: colors.labelgrey,
-    shadowOffset: {width: 0, height: 4},
+    shadowOffset: { width: 0, height: 4 },
     shadowOpacity: 0.8,
   },
 
@@ -410,7 +483,7 @@ const styles = StyleSheet.create({
     borderRadius: 20,
     elevation: 15,
     shadowColor: colors.labelgrey,
-    shadowOffset: {width: 0, height: 4},
+    shadowOffset: { width: 0, height: 4 },
     shadowOpacity: 0.8,
   },
 
@@ -426,7 +499,7 @@ const styles = StyleSheet.create({
     borderRadius: 20,
     elevation: 15,
     shadowColor: colors.labelgrey,
-    shadowOffset: {width: 0, height: 4},
+    shadowOffset: { width: 0, height: 4 },
     shadowOpacity: 0.8,
   },
 
@@ -447,7 +520,7 @@ const styles = StyleSheet.create({
     backgroundColor: colors.white,
     elevation: 10,
     shadowColor: colors.labelgrey,
-    shadowOffset: {width: 0, height: 4},
+    shadowOffset: { width: 0, height: 4 },
     shadowOpacity: 0.8,
     padding: rh(1.5),
   },
@@ -462,7 +535,7 @@ const styles = StyleSheet.create({
     borderRadius: 15,
     elevation: 10,
     shadowColor: colors.labelgrey,
-    shadowOffset: {width: 0, height: 4},
+    shadowOffset: { width: 0, height: 4 },
     shadowOpacity: 0.8,
   },
 
